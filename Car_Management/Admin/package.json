@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "skote",
+  "name": "car_management",
   "version": "3.3.0",
   "description": "",
   "main": "gulpfile.js",

@@ -1,4 +1,4 @@
-"""skote URL Configuration
+"""car_management URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 from django.views.generic import TemplateView
-from skote import views
+from car_management import views
 
 from .views import MyPasswordSetView, MyPasswordChangeView
 
