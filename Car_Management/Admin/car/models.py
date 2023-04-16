@@ -29,6 +29,9 @@ class Customer(models.Model):
     class Meta:
         verbose_name_plural = 'Customer'
 
+    def __str__(self):
+        return self.name
+
 
 class Supplier(models.Model):
     sid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='sup', alphabet="abcdefgh12345")
@@ -39,6 +42,9 @@ class Supplier(models.Model):
 
     class Meta:
         verbose_name_plural = 'Supplier'
+
+    def __str__(self):
+        return self.name
 
 
 class Products(models.Model):
@@ -83,4 +89,4 @@ class Car(models.Model):
         verbose_name_plural = 'Car'
 
     def __str__(self):
-        return self.car_name
+        return self.name

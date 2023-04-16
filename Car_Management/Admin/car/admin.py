@@ -7,8 +7,15 @@ class ProductAdmin(admin.ModelAdmin):
                     'stock_count', 'status', 'in_stock']
 
 
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ['cid', 'name', 'address', 'contact']
+
+
+class CarAdmin(admin.ModelAdmin):
+    list_display = ['carid', 'name', 'customer', 'license', 'type', 'description']
+
 # Register your models here.
-admin.site.register(Customer)
-admin.site.register(Car)
+admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Car, CarAdmin)
 admin.site.register(Products, ProductAdmin)
 admin.site.register(Supplier)
