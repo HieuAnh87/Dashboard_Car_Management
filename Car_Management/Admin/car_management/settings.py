@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     # Local App
     'layout',
+    'car',
     'ecommerce',
     'crypto',
     'e_mail',
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
 ]
@@ -110,11 +112,11 @@ WSGI_APPLICATION = 'car_management.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Car',
+        'NAME': 'car_mnt',
         'USER': 'root',
-        'PASSWORD': 'nghiadung',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
-        'PORT': '8000',
+        'PORT': '3306',
     }
 }
 
@@ -156,6 +158,10 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
+
+MEDIA_URL = "media/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTHENTICATION_BACKENDS = [
 
@@ -204,6 +210,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
 MIDDLEWARE_CLASSES = (
     'whitenoise.middleware.WhiteNoiseMiddleware',
 )
