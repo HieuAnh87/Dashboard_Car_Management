@@ -55,7 +55,7 @@ class Supplier(models.Model):
 class Products(models.Model):
     pid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='prd', alphabet="abcdefgh12345")
 
-    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
     image = models.ImageField(upload_to=product_directory_path)
     description = models.TextField(null=True, blank=True, default='This is the product')
 

@@ -2,22 +2,29 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 
+from .models import Products
+
 
 # Create your views here.
 
 class ProductsView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Products"
-        greeting['pageview'] = "Car Management"
+        products = Products.objects.order_by('-id')
+        greeting = {'products': products,
+                    'heading': "Products",
+                    'pageview': "Car Management"}
+
         return render(request, 'car/car-products.html', greeting)
 
 
 class ProductDetailView(LoginRequiredMixin, View):
-    def get(self, request):
+    def get(self, request, pid):
+        product = Products.objects.get(pid=pid)
+        # products = Products.objects.filter(category=product.category).exclude(pid=pid)
         greeting = {}
         greeting['heading'] = "Product Detail"
         greeting['pageview'] = "Car Management"
+        greeting['product'] = product
         return render(request, 'car/car-productdetail.html', greeting)
 
 

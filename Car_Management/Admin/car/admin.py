@@ -4,7 +4,7 @@ from .models import Products, Car, Customer, Supplier, Report
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['pid', 'name', 'product_image', 'price', 'cost_price', 'description', 'type',
+    list_display = ['pid', 'title', 'product_image', 'price', 'cost_price', 'description', 'type',
                     'stock_count', 'status', 'in_stock']
 
 
