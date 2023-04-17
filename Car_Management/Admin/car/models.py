@@ -19,6 +19,12 @@ REPORT_TYPE = [
     ('sales report', 'Sales report'),
 ]
 
+CATEGORY_TYPE = [
+    ('car interior', 'Car Interior'),
+    ('car exterior', 'Car Exterior'),
+    ('car accessories', 'Car Accessories'),
+]
+
 
 def product_directory_path(instance, filename):
     return 'products/{0}'.format(filename)
@@ -57,10 +63,12 @@ class Products(models.Model):
 
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to=product_directory_path)
+    category = models.CharField(choices=CATEGORY_TYPE, max_length=100, default='car interior')
     description = models.TextField(null=True, blank=True, default='This is the product')
 
     cost_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
     price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+    old_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
 
     type = models.CharField(max_length=100, default='This is the product', null=True, blank=True)
     stock_count = models.CharField(max_length=100, default='8', null=True, blank=True)
@@ -79,6 +87,10 @@ class Products(models.Model):
 
     def profit(self):
         return self.price - self.cost_price
+
+    def get_percentage(self):
+        new_price = ((self.old_price - self.price) / self.old_price) * 100
+        return int(new_price)
 
     def __str__(self):
         return self.title

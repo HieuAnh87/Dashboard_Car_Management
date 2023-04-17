@@ -9,7 +9,7 @@ class ProductImagesAdmin(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['pid', 'title', 'product_image', 'price', 'cost_price', 'description', 'type',
+    list_display = ['pid', 'title', 'product_image', 'category', 'price', 'cost_price', 'description', 'type',
                     'stock_count', 'status', 'in_stock']
     inlines = [ProductImagesAdmin]
 

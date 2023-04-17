@@ -8,10 +8,20 @@ from .models import Products
 
 # Create your views here.
 
+def filter_product_with_category(category):
+    products = Products.objects.filter(category=category)
+    return products
+
+
 class ProductsView(LoginRequiredMixin, View):
     def get(self, request):
         # Get all products ordered by ID
         products = Products.objects.order_by('-title')
+        # Get the category from the request's GET parameters
+        category = request.GET.get('category')
+        if category:
+            products = products.filter(category=category)  # Filter products by category if category is provided
+        # Create a Paginator object with 6 items per page
         # Create a Paginator object with 10 items per page
         paginator = Paginator(products, 6)
         # Get the current page number from the request's GET parameters
