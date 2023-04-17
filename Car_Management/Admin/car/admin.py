@@ -1,11 +1,17 @@
 from django.contrib import admin
 
-from .models import Products, Car, Customer, Supplier, Report
+from .models import Products, Car, Customer, Supplier, Report, ProductImages
+
+
+class ProductImagesAdmin(admin.TabularInline):
+    model = ProductImages
+    extra = 1
 
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['pid', 'title', 'product_image', 'price', 'cost_price', 'description', 'type',
                     'stock_count', 'status', 'in_stock']
+    inlines = [ProductImagesAdmin]
 
 
 class CustomerAdmin(admin.ModelAdmin):

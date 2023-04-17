@@ -84,6 +84,15 @@ class Products(models.Model):
         return self.title
 
 
+class ProductImages(models.Model):
+    image = models.ImageField(upload_to="product-images", default="product.png")
+    product = models.ForeignKey(Products, on_delete=models.SET_NULL, null=True, related_name="p_images")
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'Product Images'
+
+
 class Car(models.Model):
     carid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
 
