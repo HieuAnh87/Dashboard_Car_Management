@@ -40,6 +40,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '2da188c804ec.ngrok.io']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -214,3 +215,9 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 MIDDLEWARE_CLASSES = (
     'whitenoise.middleware.WhiteNoiseMiddleware',
 )
+
+JAZZMIN_SETTINGS = {
+    'site_header': 'Car Management Website',
+    'site_title': 'Car Management Website',
+    'welcome_sign': 'Welcome to Car Management Website',
+}
