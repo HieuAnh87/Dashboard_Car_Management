@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
+from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Products
 
@@ -9,12 +10,23 @@ from .models import Products
 
 class ProductsView(LoginRequiredMixin, View):
     def get(self, request):
-        products = Products.objects.order_by('-id')
-        greeting = {'products': products,
-                    'heading': "Products",
-                    'pageview': "Car Management"}
+        # Get all products ordered by ID
+        products = Products.objects.order_by('-title')
+        # Create a Paginator object with 10 items per page
+        paginator = Paginator(products, 6)
+        # Get the current page number from the request's GET parameters
+        page_number = request.GET.get('page')
+        # Get the Page object for the current page
+        try:
+            paginated_products = paginator.page(page_number)
+        except PageNotAnInteger:
+            paginated_products = paginator.page(1)
+        context = {
+            'products': paginated_products,
+            'heading': "Products",
+            'pageview': "Car Management"}
 
-        return render(request, 'car/car-products.html', greeting)
+        return render(request, 'car/car-products.html', context)
 
 
 class ProductDetailView(LoginRequiredMixin, View):
