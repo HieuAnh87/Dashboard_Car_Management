@@ -4,7 +4,65 @@
 
 {% block extra_css %}
 <link href="{% static 'libs/ion-rangeslider/css/ion.rangeSlider.min.css' %}" rel="stylesheet" type="text/css"/>
+    <style>
+    .card:hover {
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    }
+    .product-img:hover img {
+        transition: all 0.5s ease-in-out;
+        filter: blur(4px);
+        transform: scale(1.03);
+    }
+    .product-img:hover .add-to-cart {
+        visibility: visible;
+    }
+    .add-to-cart {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        visibility: hidden;
+    }
+    .notification {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+  </style>
 {% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/pages/add-to-cart.init.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+        $('.search-box input[type="text"]').on('keyup input', function() {
+            /* Get input value on change */
+            var inputVal = $(this).val();
+            var resultDropdown = $(this).siblings(".result");
+
+            if (inputVal.length) {
+                $.get("car/products?", {term: inputVal}).done(function(data) {
+                    // Display the returned data in the resultDropdown
+                    resultDropdown.html(data);
+                });
+            } else {
+                resultDropdown.empty();
+            }
+        });
+
+        // Hide the result dropdown when clicking outside of it
+        $(document).on("click", function (e) {
+            if ($(e.target).is(".search-box input[type='text']") === false) {
+                $(".result").empty();
+            }
+        });
+    });
+    </script>
+{% endblock %}
+
 {% block contents %}
                         <div class="row">
                             <div class="col-lg-3">
@@ -100,15 +158,15 @@
                                                         1 <i class="bx bxs-star text-warning"></i>
                                                     </label>
                                                 </div>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                             <div class="col-lg-9">
-                                    
+
                                 <div class="row mb-3">
                                     <div class="col-xl-4 col-sm-6">
                                         <div class="mt-2">
@@ -118,10 +176,12 @@
                                     <div class="col-lg-8 col-sm-6">
                                         <form class="mt-4 mt-sm-0 float-sm-end d-sm-flex align-items-center">
                                             <div class="search-box me-2">
-                                                <div class="position-relative">
-                                                    <input type="text" class="form-control border-0" placeholder="Search...">
-                                                    <i class="bx bx-search-alt search-icon"></i>
-                                                </div>
+                                                <form method="GET" action="{% url 'car-products' %}">
+                                                    <div class="position-relative">
+                                                        <input type="text" class="form-control border-0" placeholder="Search..." name="search">
+                                                        <i class="bx bx-search-alt search-icon"></i>
+                                                    </div>
+                                                </form>
                                             </div>
                                             <ul class="nav nav-pills product-view-nav justify-content-end mt-3 mt-sm-0">
                                                 <li class="nav-item">
@@ -148,12 +208,13 @@
 {#                                                        </span>#}
 {#                                                    </div>#}
                                                     <a href="{% url 'car-productdetail' p.pid %}" class="d-block">
-                                                        <img src="{{ p.image.url }}" style="width:250px;height:250px;" alt="" class="img-fluid mx-auto d-block">
+                                                        <img src="{{ p.image.url }}" style="width:250px;height:250px;" alt="" class="img-fluid mx-auto d-block product-img">
                                                     </a>
+                                                    <button onclick="addToCart({{ p.pid }})" class="btn dripicons-cart btn-primary btn-rounded bg-gradient add-to-cart">Add to cart</button>
                                                 </div>
                                                 <div class="mt-4 text-center">
                                                     <h5 class="mb-3 text-truncate"><a href="{% url 'car-productdetail' p.pid %}" class="text-dark">{{ p.title }}</a></h5>
-                                                    
+
                                                     <p class="text-muted">
                                                         <i class="bx bxs-star text-warning"></i>
                                                         <i class="bx bxs-star text-warning"></i>

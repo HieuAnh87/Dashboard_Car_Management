@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger
 from django.shortcuts import render
 from django.views import View
-from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Products
 
@@ -15,14 +15,18 @@ def filter_product_with_category(category):
 
 class ProductsView(LoginRequiredMixin, View):
     def get(self, request):
-        # Get all products ordered by ID
+        # Get all products ordered by title
         products = Products.objects.order_by('-title')
         # Get the category from the request's GET parameters
         category = request.GET.get('category')
         if category:
             products = products.filter(category=category)  # Filter products by category if category is provided
+        search_query = request.GET.get('search')
+        # SEARCH by title
+        if search_query:
+            products = products.filter(
+                title__icontains=search_query)  # Filter products by title if search query is provided
         # Create a Paginator object with 6 items per page
-        # Create a Paginator object with 10 items per page
         paginator = Paginator(products, 6)
         # Get the current page number from the request's GET parameters
         page_number = request.GET.get('page')
