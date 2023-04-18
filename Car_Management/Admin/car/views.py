@@ -20,11 +20,17 @@ def filter_product_with_category(category):
 def add_to_cart(request):
     if request.method == 'POST':
         prod_id = request.POST.get('prod_id')
-        product_check = Products.object.get(pid=prod_id)
+        product_check = Products.objects.get(pid=prod_id)
+        # print(product_check)
+        product_id_default = product_check.id
+        # print(product_id_default)
         if product_check:
-            if (Cart.object.filter(user=request.user.id, pid=prod_id)):
+            if (Cart.objects.filter(user=request.user.id, product=product_id_default)):
                 return JsonResponse({'success': False, 'message': 'Product already in cart'})
             else:
+                # Cart.objects.create(user=request.user, product=prod_id, quantity=1)
+                cart_item = Cart(user=request.user, product=product_check, quantity=1)
+                cart_item.save()
                 return JsonResponse({'success': True, 'message': 'Product added to cart'})
         else:
             return JsonResponse({'success': False})
