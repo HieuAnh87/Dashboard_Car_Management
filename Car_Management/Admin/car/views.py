@@ -3,7 +3,10 @@ from django.core.paginator import Paginator, PageNotAnInteger
 from django.shortcuts import render
 from django.views import View
 
-from .models import Products
+from .models import Products, Cart
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -11,6 +14,20 @@ from .models import Products
 def filter_product_with_category(category):
     products = Products.objects.filter(category=category)
     return products
+
+
+# Add to cart
+def add_to_cart(request):
+    if request.method == 'POST':
+        prod_id = request.POST.get('prod_id')
+        product_check = Products.object.get(pid=prod_id)
+        if product_check:
+            if (Cart.object.filter(user=request.user.id, pid=prod_id)):
+                return JsonResponse({'success': False, 'message': 'Product already in cart'})
+            else:
+                return JsonResponse({'success': True, 'message': 'Product added to cart'})
+        else:
+            return JsonResponse({'success': False})
 
 
 class ProductsView(LoginRequiredMixin, View):

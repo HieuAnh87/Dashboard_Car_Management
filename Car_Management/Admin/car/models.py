@@ -153,3 +153,17 @@ class Report(models.Model):
 
     def __str__(self):
         return self.rid
+
+
+class Cart(models.Model):
+    cid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = 'Cart'
+
+    def __str__(self):
+        return self.cid
