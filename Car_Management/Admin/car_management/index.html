@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test</title>
+<style type="text/css">
+BODY {
+    width: 550PX;
+}
+
+#chart-container {
+    width: 100%;
+    height: auto;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+</head>
+<body>
+    <div id="chart-container">
+        <canvas id="graph"></canvas>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            showGraph();
+        });
+
+
+        function showGraph(){
+                $.post("data.py",
+                function (data){
+                    var labels = [];
+                    var result = [];
+                    for (var i in data) {
+                        labels.push(data[i].status);
+                        result.push(data[i].size_status);
+                    }
+                    var pie = $("#graph");
+                    var myChart = new Chart(pie, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    data: result,
+                                    borderColor: ["rgba(217, 83, 79,1)","rgba(240, 173, 78, 1)","rgba(92, 184, 92, 1)"],
+                                    backgroundColor: ["rgba(217, 83, 79,0.2)","rgba(240, 173, 78, 0.2)","rgba(92, 184, 92, 0.2)"],
+                                }
+                            ]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: "Major"
+                            }
+                        }
+                    });
+                });
+        }
+        </script>
+
+</body>
+</html>
