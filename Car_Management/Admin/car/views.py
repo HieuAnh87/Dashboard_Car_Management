@@ -1,13 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
-from .models import Products, Cart
-
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
+from .models import Products, CartOrder
+from decimal import Decimal
 
 # Create your views here.
 
@@ -25,15 +23,35 @@ def add_to_cart(request):
         product_id_default = product_check.id
         # print(product_id_default)
         if product_check:
-            if (Cart.objects.filter(user=request.user.id, product=product_id_default)):
+            if (CartOrder.objects.filter(user=request.user.id, product=product_id_default)):
                 return JsonResponse({'success': False, 'message': 'Product already in cart'})
             else:
                 # Cart.objects.create(user=request.user, product=prod_id, quantity=1)
-                cart_item = Cart(user=request.user, product=product_check, quantity=1)
+                cart_item = CartOrder(user=request.user, product=product_check, quantity=1)
                 cart_item.save()
                 return JsonResponse({'success': True, 'message': 'Product added to cart'})
         else:
             return JsonResponse({'success': False})
+
+
+def update_cart_item(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        quantity = request.POST.get('quantity')
+        try:
+            cart_item = CartOrder.objects.get(cid=id)
+            product = cart_item.product
+            stock_count = product.stock_count
+            if stock_count is not None and int(quantity) > int(stock_count):
+                return JsonResponse({'error': 'Not enough stock.'})
+            cart_item.quantity = quantity
+            cart_item.save()
+            total_price = cart_item.get_price()
+            return JsonResponse({'success': 'Cart item updated.', 'total_price': total_price})
+        except CartOrder.DoesNotExist:
+            return JsonResponse({'error': 'Cart item not found.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'})
 
 
 class ProductsView(LoginRequiredMixin, View):
@@ -135,10 +153,22 @@ class OrdersView(LoginRequiredMixin, View):
 # Edit Customer
 class CartView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Cart"
-        greeting['pageview'] = "Car Management"
-        return render(request, 'car/car-cart.html', greeting)
+        cart_items = CartOrder.objects.filter(user=request.user.id)
+        subtotal = sum(item.get_price() for item in cart_items)
+        tax_rate = Decimal('0.05')  # 5% tax rate
+        discount = 0  # example discount value
+        tax = subtotal * tax_rate
+        total = subtotal + tax - discount
+        context = {
+            'heading': "Cart",
+            'pageview': "Car Management",
+            'cart_items': cart_items,
+            'subtotal': subtotal,
+            'tax': tax,
+            'discount': discount,
+            'total': total,
+        }
+        return render(request, 'car/car-cart.html', context)
 
 
 class CheckOutView(LoginRequiredMixin, View):
