@@ -21,150 +21,33 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    {% csrf_token %}
+                                                    {% for item in cart_items %}
                                                     <tr>
                                                         <td>
-                                                            <img src="{% static 'images/product/img-1.png'%}" alt="product-img"
+                                                            <img src="{{ item.product.image.url }}" alt="product-img"
                                                                 title="product-img" class="avatar-md" />
                                                         </td>
                                                         <td>
-                                                            <h5 class="font-size-14 text-truncate"><a href="ecommerce-product-detail.html" class="text-dark">Half sleeve T-shirt</a></h5>
-                                                            <p class="mb-0">Color : <span class="fw-medium">Maroon</span></p>
+                                                            <h5 class="font-size-14 text-truncate"><a href="{% url 'car-productdetail' item.product.pid %}" class="text-dark">{{ item.product.title }}</a></h5>
+{#                                                            <p class="mb-0">Color : <span class="fw-medium">Maroon</span></p>#}
                                                         </td>
                                                         <td>
-                                                            $ 450
+                                                            $ {{ item.product.price }}
                                                         </td>
                                                         <td>
                                                             <div class="me-3" style="width: 120px;">
-                                                                <input type="text" value="02" name="demo_vertical">
+                                                                <input data-id="{{ item.cid }}" type="text" value="{{ item.quantity }}" name="demo_vertical" id="quantity-{{ item.id }}">
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            $ 900
+                                                            $ <span id="total-{{ item.cid }}" data-price="{{ item.get_price }}">{{ item.get_price }}</span>
                                                         </td>
                                                         <td>
                                                             <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{% static 'images/product/img-2.png'%}" alt="product-img"
-                                                                title="product-img" class="avatar-md" />
-                                                        </td>
-                                                        <td>
-                                                            <h5 class="font-size-14 text-truncate"><a href="ecommerce-product-detail.html" class="text-dark">Light blue T-shirt</a></h5>
-                                                            <p class="mb-0">Color : <span class="fw-medium">Light blue</span></p>
-                                                        </td>
-                                                        <td>
-                                                            $ 225
-                                                        </td>
-                                                        <td>
-                                                            <div class="me-3" style="width: 120px;">
-                                                                <input type="text" value="01" name="demo_vertical">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            $ 225
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{% static 'images/product/img-3.png'%}" alt="product-img"
-                                                                title="product-img" class="avatar-md" />
-                                                        </td>
-                                                        <td>
-                                                            <h5 class="font-size-14 text-truncate"><a href="ecommerce-product-detail.html" class="text-dark">Black Color T-shirt</a></h5>
-                                                            <p class="mb-0">Color : <span class="fw-medium">Black</span></p>
-                                                        </td>
-                                                        <td>
-                                                            $ 152
-                                                        </td>
-                                                        <td>
-                                                            <div class="me-3" style="width: 120px;">
-                                                                <input type="text" value="02" name="demo_vertical">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            $ 304
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{% static 'images/product/img-4.png'%}" alt="product-img"
-                                                                title="product-img" class="avatar-md" />
-                                                        </td>
-                                                        <td>
-                                                            <h5 class="font-size-14 text-truncate"><a href="ecommerce-product-detail.html" class="text-dark">Hoodie (Blue)</a></h5>
-                                                            <p class="mb-0">Color : <span class="fw-medium">Blue</span></p>
-                                                        </td>
-                                                        <td>
-                                                            $ 145
-                                                        </td>
-                                                        <td>
-                                                            <div class="me-3" style="width: 120px;">
-                                                                <input type="text" value="02" name="demo_vertical">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            $ 290
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{% static 'images/product/img-5.png'%}" alt="product-img"
-                                                                title="product-img" class="avatar-md" />
-                                                        </td>
-                                                        <td>
-                                                            <h5 class="font-size-14 text-truncate"><a href="ecommerce-product-detail.html" class="text-dark">Half sleeve T-Shirt</a></h5>
-                                                            <p class="mb-0">Color : <span class="fw-medium">Light orange</span></p>
-                                                        </td>
-                                                        <td>
-                                                            $ 138
-                                                        </td>
-                                                        <td>
-                                                            <div class="me-3" style="width: 120px;">
-                                                                <input type="text" value="01" name="demo_vertical">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            $ 138
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{% static 'images/product/img-6.png'%}" alt="product-img"
-                                                                title="product-img" class="avatar-md" />
-                                                        </td>
-                                                        <td>
-                                                            <h5 class="font-size-14 text-truncate"><a href="ecommerce-product-detail.html" class="text-dark">Green color T-shirt</a></h5>
-                                                            <p class="mb-0">Color : <span class="fw-medium">Green</span></p>
-                                                        </td>
-                                                        <td>
-                                                            $ 152
-                                                        </td>
-                                                        <td>
-                                                            <div class="me-3" style="width: 120px;">
-                                                                <input type="text" value="02" name="demo_vertical">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            $ 304
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
-                                                        </td>
-                                                    </tr>
+                                                    {% endfor %}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -190,22 +73,22 @@
 
                                         <div class="table-responsive">
                                             <table class="table mb-0">
-                                                <tbody>
+                                                <tbody id="order-summary">
                                                     <tr>
                                                         <td>Grand Total :</td>
-                                                        <td>$ 1,857</td>
+                                                        <td>$ <span id="grand-total">{{ subtotal }}</span></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Discount : </td>
-                                                        <td>- $ 157</td>
+                                                        <td>- $ <span id="discount-total">{{ discount }}</span></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Estimated Tax : </td>
-                                                        <td>$ 19.22</td>
+                                                        <td>$ <span id="tax-total">{{ tax }}</span></td>
                                                     </tr>
                                                     <tr>
                                                         <th>Total :</th>
-                                                        <th>$ 1744.22</th>
+                                                        <th>$ <span id="order-total">{{ total }}</span></th>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -222,6 +105,63 @@
 {% block extra_javascript %}
     <!-- Bootrstrap touchspin -->
     <script src="{% static 'libs/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js' %}"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>
     <script src="{% static 'js/pages/ecommerce-cart.init.js' %}"></script>
+
+    <script>
+    $(document).ready(function() {
+                  // updateOrderSummary function
+      function updateOrderSummary() {
+          var subtotal = Decimal('0');
+          var taxRate = Decimal('0.05'); // 5% tax rate
+          var discount = Decimal('{{ discount }}'); // example discount value
+
+          // Loop through all cart items and calculate subtotal
+          {% for item in cart_items %}
+            subtotal = subtotal.plus('{{ item.get_price }}');
+          {% endfor %}
+
+          // Calculate tax and total
+            var tax = subtotal.times(taxRate);
+            var total = subtotal.plus(tax).minus(discount);
+
+          // Update table cells with calculated values
+          $('#order-summary #subtotal').text(subtotal.toFixed(2));
+          $('#order-summary #tax').text(tax.toFixed(2));
+          $('#order-summary #discount').text('- $ ' + discount.toFixed(2));
+          $('#order-summary #total').text('$ ' + total.toFixed(2));
+      }
+
+
+      $('input[name="demo_vertical"]').on('change', function() {
+        var id = $(this).data('id');
+        var quantity = $(this).val();
+        $.ajax({
+          url: 'update_cart_item/',
+          method: 'POST',
+          data: {
+            'id': id,
+            'quantity': quantity,
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+          },
+          success: function(response) {
+            // Update the total price span with the new price returned in the response
+            console.log(response);
+            if (response.success) {
+                console.log(response);
+                var total = Number(response.total_price);
+                $('#total-' + id).text(total.toFixed(2));
+                $('#grand-total').text(total.toFixed(2));
+                updateOrderSummary(); // call the updateOrderSummary function
+            } else {
+                console.log(response.error);
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error(error);
+          }
+        });
+      });
+    });
+    </script>
 {% endblock %}

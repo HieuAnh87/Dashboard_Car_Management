@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Products, Car, Customer, Supplier, Report, ProductImages, Cart
+from .models import Products, Customer, Supplier, Report, ProductImages, CartOrderItems, CartOrder
 
 
 class ProductImagesAdmin(admin.TabularInline):
@@ -18,8 +18,12 @@ class CustomerAdmin(admin.ModelAdmin):
     list_display = ['cid', 'name', 'address', 'contact']
 
 
-class CarAdmin(admin.ModelAdmin):
-    list_display = ['carid', 'name', 'customer', 'license', 'type', 'description']
+class CartOrderItemsAdmin(admin.ModelAdmin):
+    list_display = ['cart_order', 'total_price']
+
+
+class CartOrderAdmin(admin.ModelAdmin):
+    list_display = ['cid', 'user', 'product', 'quantity', 'price']
 
 
 class ReportAdmin(admin.ModelAdmin):
@@ -28,8 +32,8 @@ class ReportAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
-admin.site.register(Car, CarAdmin)
 admin.site.register(Products, ProductAdmin)
 admin.site.register(Supplier)
 admin.site.register(Report, ReportAdmin)
-admin.site.register(Cart)
+admin.site.register(CartOrderItems, CartOrderItemsAdmin)
+admin.site.register(CartOrder, CartOrderAdmin)

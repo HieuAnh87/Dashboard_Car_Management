@@ -115,7 +115,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'car_mnt',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'nghiadung',
         'HOST': 'localhost',
         'PORT': '3306',
     }

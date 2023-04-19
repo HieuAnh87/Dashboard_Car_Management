@@ -106,23 +106,6 @@ class ProductImages(models.Model):
         verbose_name_plural = 'Product Images'
 
 
-class Car(models.Model):
-    carid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
-
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-
-    name = models.CharField(max_length=100, null=True, blank=True)
-    license = models.CharField(max_length=100, null=True, blank=True)
-    type = models.CharField(max_length=100, default='Bejing x7', null=True, blank=True)
-    description = models.TextField(null=True, blank=True, default='This is the product')
-
-    class Meta:
-        verbose_name_plural = 'Car'
-
-    def __str__(self):
-        return self.name
-
-
 class Receipt(models.Model):
     rid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='rec', alphabet="abcdefgh12345")
 
@@ -155,15 +138,36 @@ class Report(models.Model):
         return self.rid
 
 
-class Cart(models.Model):
+class CartOrder(models.Model):
     cid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
+    price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
 
     class Meta:
-        verbose_name_plural = 'Cart'
+        verbose_name_plural = 'CartOrder'
 
     def __str__(self):
         return self.cid
+
+    def get_price(self):
+        return int(self.quantity) * self.product.price
+
+
+class CartOrderItems(models.Model):
+    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    total_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+
+    class Meta:
+        verbose_name_plural = 'CartOrderItems'
+
+    def __str__(self):
+        return self.cart_order.cid
+
+    def get_tax(self):
+        return self.total_price * 0.05
+
+    def get_total(self):
+        return self.total_price + self.get_tax()
