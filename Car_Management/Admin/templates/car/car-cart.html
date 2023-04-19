@@ -44,7 +44,7 @@
                                                             $ <span id="total-{{ item.cid }}" data-price="{{ item.get_price }}">{{ item.get_price }}</span>
                                                         </td>
                                                         <td>
-                                                            <a href="javascript:void(0);" class="action-icon text-danger"> <i class="mdi mdi-trash-can font-size-18"></i></a>
+                                                            <a href="javascript:void(0);" class="action-icon text-danger delete-item" data-cid="{{ item.cid }}"> <i class="mdi mdi-trash-can font-size-18"></i></a>
                                                         </td>
                                                     </tr>
                                                     {% endfor %}
@@ -167,6 +167,25 @@
           }
         });
       });
+
+      $('.delete-item').on('click', function() {
+            var cid = $(this).data('cid');
+            $.ajax({
+              url: 'delete_cart_item/',
+              method: 'POST',
+              data: {
+                'cid': cid,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              success: function(response) {
+                  location.reload();
+              },
+              error: function(xhr, status, error) {
+                console.error(error);
+              }
+            });
+          });
+
     });
     </script>
 {% endblock %}

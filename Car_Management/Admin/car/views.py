@@ -1,11 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
 from .models import Products, CartOrder
 from decimal import Decimal
+
 
 # Create your views here.
 
@@ -62,6 +65,15 @@ def update_cart_item(request):
             return JsonResponse({'error': 'Cart item not found.'})
     else:
         return JsonResponse({'error': 'Invalid request method.'})
+
+
+class DeleteCartItemView(LoginRequiredMixin, View):
+    def post(self, request):
+        cid = request.POST.get('cid')
+        cart_item = get_object_or_404(CartOrder, cid=cid, user=request.user)
+        print(cart_item)
+        cart_item.delete()
+        return redirect('car-cart')
 
 
 class ProductsView(LoginRequiredMixin, View):
@@ -179,6 +191,14 @@ class CartView(LoginRequiredMixin, View):
             'total': total,
         }
         return render(request, 'car/car-cart.html', context)
+
+    # def post(self, request):
+    #     if request.method == "POST":
+    #         if "deleteCartItem" in request.POST:
+    #             id = request.POST['id']
+    #             obj = CartOrder.objects.filter(id=id).first()
+    #             obj.delete()
+    #             return HttpResponse()
 
 
 class CheckOutView(LoginRequiredMixin, View):
