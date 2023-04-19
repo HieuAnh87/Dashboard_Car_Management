@@ -47,7 +47,17 @@ def update_cart_item(request):
             cart_item.quantity = quantity
             cart_item.save()
             total_price = cart_item.get_price()
-            return JsonResponse({'success': 'Cart item updated.', 'total_price': total_price})
+            subtotal = sum(item.get_price() for item in CartOrder.objects.filter(user=request.user.id))
+            tax_rate = Decimal('0.05')  # 5% tax rate
+            discount = 0  # example discount value
+            tax = subtotal * tax_rate
+            total = subtotal + tax - discount
+            return JsonResponse({'success': 'Cart item updated.',
+                                 'total_price': total_price,
+                                 'subtotal': str(subtotal),
+                                 'discount': str(discount),
+                                 'tax': str(tax),
+                                 'total': str(total)})
         except CartOrder.DoesNotExist:
             return JsonResponse({'error': 'Cart item not found.'})
     else:

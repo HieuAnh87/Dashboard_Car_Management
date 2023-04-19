@@ -110,7 +110,7 @@
 
     <script>
     $(document).ready(function() {
-                  // updateOrderSummary function
+       // updateOrderSummary function
       function updateOrderSummary() {
           var subtotal = Decimal('0');
           var taxRate = Decimal('0.05'); // 5% tax rate
@@ -123,15 +123,14 @@
 
           // Calculate tax and total
             var tax = subtotal.times(taxRate);
-            var total = subtotal.plus(tax).minus(discount);
+            var total_ = subtotal.plus(tax).minus(discount);
 
           // Update table cells with calculated values
           $('#order-summary #subtotal').text(subtotal.toFixed(2));
           $('#order-summary #tax').text(tax.toFixed(2));
-          $('#order-summary #discount').text('- $ ' + discount.toFixed(2));
-          $('#order-summary #total').text('$ ' + total.toFixed(2));
+          $('#order-summary #discount').text('- $ ' + discount.toFixed(1));
+          $('#order-summary #total').text('$ ' + total_.toFixed(1));
       }
-
 
       $('input[name="demo_vertical"]').on('change', function() {
         var id = $(this).data('id');
@@ -148,10 +147,16 @@
             // Update the total price span with the new price returned in the response
             console.log(response);
             if (response.success) {
-                console.log(response);
                 var total = Number(response.total_price);
+                var subtotal =  Number(response.subtotal);
+                var discount =  Number(response.discount);
+                var tax =  Number(response.tax);
+                var total_ =  Number(response.total);
                 $('#total-' + id).text(total.toFixed(2));
-                $('#grand-total').text(total.toFixed(2));
+                $('#grand-total').text(subtotal.toFixed(2));
+                $('#discount-total').text(discount.toFixed(2));
+                $('#tax-total').text(tax.toFixed(2));
+                $('#order-total').text(total_.toFixed(2));
                 updateOrderSummary(); // call the updateOrderSummary function
             } else {
                 console.log(response.error);
