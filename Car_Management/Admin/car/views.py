@@ -57,7 +57,8 @@ def update_cart_item(request):
                 cart_order_item.save()
             except CartOrderItems.DoesNotExist:
                 # ValueError: Cannot assign "1": "CartOrderItems.user" must be a "User" instance.
-                CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total, cart_order=cart_item)
+                CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total,
+                                              cart_order=cart_item)
             return JsonResponse({'success': 'Cart item updated.',
                                  'total_price': total_price,
                                  'subtotal': str(subtotal),
@@ -79,15 +80,16 @@ class DeleteCartItemView(LoginRequiredMixin, View):
         return redirect('car-cart')
 
 
-class CheckOutCartItemView(LoginRequiredMixin, View):
-    def get(self, request):
-        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
-        context = {
-            'heading': "Checkout",
-            'pageview': "Car Management",
-            'cart_order_item': cart_order_item
-        }
-        return render(request, 'car/car-checkout.html', context)
+# class CheckOutCartItemView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+#         context = {
+#             'heading': "Checkout",
+#             'pageview': "Car Management",
+#             'cart_order_item': cart_order_item
+#         }
+#         return render(request, 'car/car-checkout.html', context)
+
 
 
 class ProductsView(LoginRequiredMixin, View):
@@ -217,10 +219,34 @@ class CartView(LoginRequiredMixin, View):
 
 class CheckOutView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Checkout"
-        greeting['pageview'] = "Car Management"
-        return render(request, 'car/car-checkout.html', greeting)
+        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+        cart_item = CartOrder.objects.filter(user=request.user.id)
+        # print(cart_order_item.cart_order.all())
+        context = {
+            'heading': "Checkout",
+            'pageview': "Car Management",
+            'cart_order_item': cart_order_item,
+            'cart_item': cart_item,
+            'subtotal': cart_order_item.grand_total,
+            'tax': cart_order_item.tax,
+            'total': cart_order_item.total_price,
+        }
+        return render(request, 'car/car-checkout.html', context)
+
+    def post(self, request):
+        name = request.POST.get('billing-name')
+        email = request.POST.get('billing-email-address')
+        phone = request.POST.get('billing-phone')
+        address = request.POST.get('billing-address')
+        city = request.POST.get('city')
+        disrict = request.POST.get('disrict')
+        ward = request.POST.get('ward')
+
+        print(name, email, phone, address, city, disrict, ward)
+
+        return redirect('/car/checkout')
+
+
 
 
 class ShopsView(LoginRequiredMixin, View):
