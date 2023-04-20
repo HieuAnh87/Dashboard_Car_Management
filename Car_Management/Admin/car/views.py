@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts
 
 
 # Add to cart
@@ -19,7 +19,7 @@ def add_to_cart(request):
         product_id_default = product_check.id
         # print(product_id_default)
         if product_check:
-            if (CartOrder.objects.filter(user=request.user.id, product=product_id_default)):
+            if CartOrder.objects.filter(user=request.user.id, product=product_id_default):
                 return JsonResponse({'success': False, 'message': 'Product already in cart'})
             else:
                 # Cart.objects.create(user=request.user, product=prod_id, quantity=1)
@@ -56,6 +56,7 @@ def update_cart_item(request):
                 cart_order_item.total_price = total
                 cart_order_item.save()
             except CartOrderItems.DoesNotExist:
+                print('CartOrderItems.DoesNotExist')
                 # ValueError: Cannot assign "1": "CartOrderItems.user" must be a "User" instance.
                 CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total,
                                               cart_order=cart_item)
@@ -89,7 +90,6 @@ class DeleteCartItemView(LoginRequiredMixin, View):
 #             'cart_order_item': cart_order_item
 #         }
 #         return render(request, 'car/car-checkout.html', context)
-
 
 
 class ProductsView(LoginRequiredMixin, View):
@@ -236,17 +236,33 @@ class CheckOutView(LoginRequiredMixin, View):
     def post(self, request):
         name = request.POST.get('billing-name')
         email = request.POST.get('billing-email-address')
-        phone = request.POST.get('billing-phone')
+        contact = request.POST.get('billing-phone')
         address = request.POST.get('billing-address')
         city = request.POST.get('city')
-        disrict = request.POST.get('disrict')
+        district = request.POST.get('district')
+
         ward = request.POST.get('ward')
 
-        print(name, email, phone, address, city, disrict, ward)
+        cart_items = CartOrder.objects.filter(user=request.user.id)
+        for items in cart_items:
+            statistics_prod = StatisticsProducts.objects.filter(product=items.product).first()
+            if statistics_prod:
+                statistics_prod.quantity_sold = statistics_prod.quantity_sold + items.quantity
+                statistics_prod.total_revenue = statistics_prod.total_revenue + items.get_price()
+                statistics_prod.save()
+            else:
+                statistics_prod = StatisticsProducts(product=items.product, quantity_sold=items.quantity,
+                                                     total_revenue=items.get_price())
+                statistics_prod.save()
 
-        return redirect('/car/checkout')
+        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+        customer, created = Customer.objects.get_or_create(email=email, defaults={'name': name, 'contact': contact,
+                                                                                  'address': address, 'city': city,
+                                                                                  'district': district, 'ward': ward})
 
-
+        order = Order(user=request.user, customer=customer, cart_order_items=cart_order_item)
+        order.save()
+        return redirect('/car/invoice/' + str(order.oid))
 
 
 class ShopsView(LoginRequiredMixin, View):
@@ -263,3 +279,18 @@ class AddProductView(LoginRequiredMixin, View):
         greeting['heading'] = "Add Product"
         greeting['pageview'] = "Car Management"
         return render(request, 'car/car-addproduct.html', greeting)
+
+
+class InvoiceView(LoginRequiredMixin, View):
+    def get(self, request, oid):
+        order = Order.objects.filter(oid=oid).first()
+        customer = Customer.objects.filter(id=order.customer.id).first()
+        cart_item = CartOrder.objects.filter(user=request.user.id)
+        context = {
+            'heading': "Invoice",
+            'pageview': "Car Management",
+            'order': order,
+            'customer': customer,
+            'cart_item': cart_item,
+        }
+        return render(request, 'car/car-invoicedetail.html', context)

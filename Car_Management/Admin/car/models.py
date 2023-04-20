@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from shortuuid.django_fields import ShortUUIDField
 
@@ -36,6 +37,7 @@ class Customer(models.Model):
 
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100, default='123 Street')
+    email = models.EmailField(max_length=100, default='test@gmail.com')
     city = models.CharField(max_length=100, default='City')
     district = models.CharField(max_length=100, default='district')
     ward = models.CharField(max_length=100, default='district')
@@ -109,22 +111,6 @@ class ProductImages(models.Model):
         verbose_name_plural = 'Product Images'
 
 
-class Receipt(models.Model):
-    rid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='rec', alphabet="abcdefgh12345")
-
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    date_created = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(null=True, blank=True, default='This is the product')
-
-    class Meta:
-        verbose_name_plural = 'Receipt'
-
-    def __str__(self):
-        return self.rid
-
-
 class Report(models.Model):
     rid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='rep', alphabet="abcdefgh12345")
 
@@ -179,12 +165,40 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-
-    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
     cart_order_items = models.ForeignKey(CartOrderItems, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    invoice_file = models.BinaryField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Order'
 
     def __str__(self):
         return self.oid
+
+
+class Invoice(models.Model):
+    iid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='inv', alphabet="abcdefgh12345")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'Invoice'
+
+    def __str__(self):
+        return self.iid
+
+
+class StatisticsProducts(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='statistics')
+    quantity_sold = models.IntegerField(default=0)
+    total_revenue = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+
+    class Meta:
+        verbose_name_plural = 'StatisticsProduct'
+
+    def __str__(self):
+        return self.product.title
