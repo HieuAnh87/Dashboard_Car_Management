@@ -58,7 +58,7 @@
                                             </div> <!-- end col -->
                                             <div class="col-sm-6">
                                                 <div class="text-sm-end mt-2 mt-sm-0">
-                                                    <a href="{% url "ecommerce-checkout" %}" class="btn btn-success">
+                                                    <a href="{% url "car-checkout" %}" class="btn btn-success checkout-item" data-orderid="{{ cart_items.user.id }}">
                                                         <i class="mdi mdi-cart-arrow-right me-1"></i> Checkout </a>
                                                 </div>
                                             </div> <!-- end col -->
@@ -178,6 +178,33 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
               },
               success: function(response) {
+                  location.reload();
+              },
+              error: function(xhr, status, error) {
+                console.error(error);
+              }
+            });
+          });
+      $('.checkout-item').on('click', function() {
+            var orderid = $(this).data('orderid');
+            var subtotal = Decimal({{ subtotal }})
+            var discount = Decimal({{ discount }})
+            var tax = Decimal({{ tax }}).toFixed(2);
+            var total = Decimal({{ total }}).toFixed(2);
+
+            $.ajax({
+              url: 'checkout_cart_item/',
+              method: 'POST',
+              data: {
+                'orderid': orderid,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'subtotal': subtotal,
+                'discount': discount,
+                'tax': tax,
+                'total': total,
+              },
+              success: function(response) {
+                  console.log(response);
                   location.reload();
               },
               error: function(xhr, status, error) {

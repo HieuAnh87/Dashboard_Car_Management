@@ -13,5 +13,6 @@ urlpatterns = [
     path('addproduct', views.AddProductView.as_view(), name='car-addproduct'),
     path('add-to-cart/', views.add_to_cart, name='add-to-cart'),
     path('update_cart_item/', views.update_cart_item, name='update_cart_item'),
-    path('delete_cart_item/', views.DeleteCartItemView.as_view(), name='delete_cart_item') # car/delete_cart_item
+    path('delete_cart_item/', views.DeleteCartItemView.as_view(), name='delete_cart_item'), # car/delete_cart_item
+    path('checkout_cart_item/', views.CheckOutCartItemView.as_view(), name='checkout_cart_item') # car/checkout_cart_item
 ]

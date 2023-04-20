@@ -36,6 +36,9 @@ class Customer(models.Model):
 
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100, default='123 Street')
+    city = models.CharField(max_length=100, default='City')
+    district = models.CharField(max_length=100, default='district')
+    ward = models.CharField(max_length=100, default='district')
     contact = models.CharField(max_length=100, default='0123456789')
 
     class Meta:
@@ -141,8 +144,8 @@ class Report(models.Model):
 class CartOrder(models.Model):
     cid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_orders')
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='cart_orders')
     quantity = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
 
@@ -157,7 +160,9 @@ class CartOrder(models.Model):
 
 
 class CartOrderItems(models.Model):
-    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='cart_order_items')
+    grand_total = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+    tax = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
     total_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
 
     class Meta:
@@ -166,8 +171,18 @@ class CartOrderItems(models.Model):
     def __str__(self):
         return self.cart_order.cid
 
-    def get_tax(self):
-        return self.total_price * 0.05
 
-    def get_total(self):
-        return self.total_price + self.get_tax()
+class Order(models.Model):
+    oid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='ord', alphabet="abcdefgh12345")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+
+    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    cart_order_items = models.ForeignKey(CartOrderItems, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Order'
+
+    def __str__(self):
+        return self.oid

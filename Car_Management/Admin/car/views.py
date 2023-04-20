@@ -1,13 +1,13 @@
+from decimal import Decimal
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
 
-from .models import Products, CartOrder
-from decimal import Decimal
+from .models import Products, CartOrder, CartOrderItems
 
 
 # Create your views here.
@@ -74,6 +74,26 @@ class DeleteCartItemView(LoginRequiredMixin, View):
         print(cart_item)
         cart_item.delete()
         return redirect('car-cart')
+
+
+class CheckOutCartItemView(LoginRequiredMixin, View):
+    def post(self, request):
+        user_id = request.POST.get('orderid')
+        subtotal = request.POST.get('subtotal')
+        tax = request.POST.get('tax')
+        total = request.POST.get('total')
+        if subtotal and tax and total:
+            cart_list = CartOrder.objects.filter(user=request.user.id)
+            print(cart_list)
+            try:
+                # save all in order table
+                orderitems = CartOrderItems(grand_total=subtotal, tax=tax, total_price=total, cart_order=cart_list)
+                orderitems.save()
+            except Exception as e:
+                print(e)
+        else:
+            print('error')
+        return redirect('car-checkout')
 
 
 class ProductsView(LoginRequiredMixin, View):
