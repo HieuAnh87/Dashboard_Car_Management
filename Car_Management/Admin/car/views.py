@@ -10,13 +10,6 @@ from django.views import View
 from .models import Products, CartOrder, CartOrderItems
 
 
-# Create your views here.
-
-def filter_product_with_category(category):
-    products = Products.objects.filter(category=category)
-    return products
-
-
 # Add to cart
 def add_to_cart(request):
     if request.method == 'POST':
@@ -55,6 +48,16 @@ def update_cart_item(request):
             discount = 0  # example discount value
             tax = subtotal * tax_rate
             total = subtotal + tax - discount
+
+            try:
+                cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+                cart_order_item.grand_total = subtotal
+                cart_order_item.tax = tax
+                cart_order_item.total_price = total
+                cart_order_item.save()
+            except CartOrderItems.DoesNotExist:
+                # ValueError: Cannot assign "1": "CartOrderItems.user" must be a "User" instance.
+                CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total, cart_order=cart_item)
             return JsonResponse({'success': 'Cart item updated.',
                                  'total_price': total_price,
                                  'subtotal': str(subtotal),
@@ -77,23 +80,14 @@ class DeleteCartItemView(LoginRequiredMixin, View):
 
 
 class CheckOutCartItemView(LoginRequiredMixin, View):
-    def post(self, request):
-        user_id = request.POST.get('orderid')
-        subtotal = request.POST.get('subtotal')
-        tax = request.POST.get('tax')
-        total = request.POST.get('total')
-        if subtotal and tax and total:
-            cart_list = CartOrder.objects.filter(user=request.user.id)
-            print(cart_list)
-            try:
-                # save all in order table
-                orderitems = CartOrderItems(grand_total=subtotal, tax=tax, total_price=total, cart_order=cart_list)
-                orderitems.save()
-            except Exception as e:
-                print(e)
-        else:
-            print('error')
-        return redirect('car-checkout')
+    def get(self, request):
+        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+        context = {
+            'heading': "Checkout",
+            'pageview': "Car Management",
+            'cart_order_item': cart_order_item
+        }
+        return render(request, 'car/car-checkout.html', context)
 
 
 class ProductsView(LoginRequiredMixin, View):

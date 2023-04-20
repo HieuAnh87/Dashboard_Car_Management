@@ -161,6 +161,8 @@ class CartOrder(models.Model):
 
 class CartOrderItems(models.Model):
     cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='cart_order_items')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_order_items')
+
     grand_total = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
     tax = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
     total_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
