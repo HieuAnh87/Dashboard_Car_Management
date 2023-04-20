@@ -1,16 +1,93 @@
+from decimal import Decimal
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products
+from .models import Products, CartOrder, CartOrderItems
 
 
-# Create your views here.
+# Add to cart
+def add_to_cart(request):
+    if request.method == 'POST':
+        prod_id = request.POST.get('prod_id')
+        product_check = Products.objects.get(pid=prod_id)
+        # print(product_check)
+        product_id_default = product_check.id
+        # print(product_id_default)
+        if product_check:
+            if (CartOrder.objects.filter(user=request.user.id, product=product_id_default)):
+                return JsonResponse({'success': False, 'message': 'Product already in cart'})
+            else:
+                # Cart.objects.create(user=request.user, product=prod_id, quantity=1)
+                cart_item = CartOrder(user=request.user, product=product_check, quantity=1)
+                cart_item.save()
+                return JsonResponse({'success': True, 'message': 'Product added to cart'})
+        else:
+            return JsonResponse({'success': False})
 
-def filter_product_with_category(category):
-    products = Products.objects.filter(category=category)
-    return products
+
+def update_cart_item(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        quantity = request.POST.get('quantity')
+        try:
+            cart_item = CartOrder.objects.get(cid=id)
+            product = cart_item.product
+            stock_count = product.stock_count
+            if stock_count is not None and int(quantity) > int(stock_count):
+                return JsonResponse({'error': 'Not enough stock.'})
+            cart_item.quantity = quantity
+            cart_item.save()
+            total_price = cart_item.get_price()
+            subtotal = sum(item.get_price() for item in CartOrder.objects.filter(user=request.user.id))
+            tax_rate = Decimal('0.05')  # 5% tax rate
+            discount = 0  # example discount value
+            tax = subtotal * tax_rate
+            total = subtotal + tax - discount
+
+            try:
+                cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+                cart_order_item.grand_total = subtotal
+                cart_order_item.tax = tax
+                cart_order_item.total_price = total
+                cart_order_item.save()
+            except CartOrderItems.DoesNotExist:
+                # ValueError: Cannot assign "1": "CartOrderItems.user" must be a "User" instance.
+                CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total, cart_order=cart_item)
+            return JsonResponse({'success': 'Cart item updated.',
+                                 'total_price': total_price,
+                                 'subtotal': str(subtotal),
+                                 'discount': str(discount),
+                                 'tax': str(tax),
+                                 'total': str(total)})
+        except CartOrder.DoesNotExist:
+            return JsonResponse({'error': 'Cart item not found.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'})
+
+
+class DeleteCartItemView(LoginRequiredMixin, View):
+    def post(self, request):
+        cid = request.POST.get('cid')
+        cart_item = get_object_or_404(CartOrder, cid=cid, user=request.user)
+        print(cart_item)
+        cart_item.delete()
+        return redirect('car-cart')
+
+
+class CheckOutCartItemView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+        context = {
+            'heading': "Checkout",
+            'pageview': "Car Management",
+            'cart_order_item': cart_order_item
+        }
+        return render(request, 'car/car-checkout.html', context)
 
 
 class ProductsView(LoginRequiredMixin, View):
@@ -112,10 +189,30 @@ class OrdersView(LoginRequiredMixin, View):
 # Edit Customer
 class CartView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Cart"
-        greeting['pageview'] = "Car Management"
-        return render(request, 'car/car-cart.html', greeting)
+        cart_items = CartOrder.objects.filter(user=request.user.id)
+        subtotal = sum(item.get_price() for item in cart_items)
+        tax_rate = Decimal('0.05')  # 5% tax rate
+        discount = 0  # example discount value
+        tax = subtotal * tax_rate
+        total = subtotal + tax - discount
+        context = {
+            'heading': "Cart",
+            'pageview': "Car Management",
+            'cart_items': cart_items,
+            'subtotal': subtotal,
+            'tax': tax,
+            'discount': discount,
+            'total': total,
+        }
+        return render(request, 'car/car-cart.html', context)
+
+    # def post(self, request):
+    #     if request.method == "POST":
+    #         if "deleteCartItem" in request.POST:
+    #             id = request.POST['id']
+    #             obj = CartOrder.objects.filter(id=id).first()
+    #             obj.delete()
+    #             return HttpResponse()
 
 
 class CheckOutView(LoginRequiredMixin, View):

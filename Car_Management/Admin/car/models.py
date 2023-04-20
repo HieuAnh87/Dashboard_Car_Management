@@ -36,6 +36,9 @@ class Customer(models.Model):
 
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100, default='123 Street')
+    city = models.CharField(max_length=100, default='City')
+    district = models.CharField(max_length=100, default='district')
+    ward = models.CharField(max_length=100, default='district')
     contact = models.CharField(max_length=100, default='0123456789')
 
     class Meta:
@@ -106,23 +109,6 @@ class ProductImages(models.Model):
         verbose_name_plural = 'Product Images'
 
 
-class Car(models.Model):
-    carid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
-
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-
-    name = models.CharField(max_length=100, null=True, blank=True)
-    license = models.CharField(max_length=100, null=True, blank=True)
-    type = models.CharField(max_length=100, default='Bejing x7', null=True, blank=True)
-    description = models.TextField(null=True, blank=True, default='This is the product')
-
-    class Meta:
-        verbose_name_plural = 'Car'
-
-    def __str__(self):
-        return self.name
-
-
 class Receipt(models.Model):
     rid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='rec', alphabet="abcdefgh12345")
 
@@ -153,3 +139,52 @@ class Report(models.Model):
 
     def __str__(self):
         return self.rid
+
+
+class CartOrder(models.Model):
+    cid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='car', alphabet="abcdefgh12345")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_orders')
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='cart_orders')
+    quantity = models.IntegerField(default=1)
+    price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+
+    class Meta:
+        verbose_name_plural = 'CartOrder'
+
+    def __str__(self):
+        return self.cid
+
+    def get_price(self):
+        return int(self.quantity) * self.product.price
+
+
+class CartOrderItems(models.Model):
+    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='cart_order_items')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_order_items')
+
+    grand_total = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+    tax = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+    total_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+
+    class Meta:
+        verbose_name_plural = 'CartOrderItems'
+
+    def __str__(self):
+        return self.cart_order.cid
+
+
+class Order(models.Model):
+    oid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='ord', alphabet="abcdefgh12345")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+
+    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    cart_order_items = models.ForeignKey(CartOrderItems, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Order'
+
+    def __str__(self):
+        return self.oid

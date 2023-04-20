@@ -23,43 +23,27 @@
         transform: translate(-50%, -50%);
         visibility: hidden;
     }
-    .notification {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background-color: #f0f0f0;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    }
   </style>
 {% endblock %}
 {% block extra_js %}
-    <script src="{% static 'js/pages/add-to-cart.init.js' %}"></script>
+{#    <script src="{% static 'js/pages/add-to-cart.init.js' %}"></script>#}
     <script>
         $(document).ready(function() {
-        $('.search-box input[type="text"]').on('keyup input', function() {
-            /* Get input value on change */
-            var inputVal = $(this).val();
-            var resultDropdown = $(this).siblings(".result");
+            $('.search-box input[type="text"]').on('keyup input', function() {
+                /* Get input value on change */
+                var inputVal = $(this).val();
+                var resultDropdown = $(this).siblings(".result");
 
-            if (inputVal.length) {
-                $.get("car/products?", {term: inputVal}).done(function(data) {
-                    // Display the returned data in the resultDropdown
-                    resultDropdown.html(data);
-                });
-            } else {
-                resultDropdown.empty();
-            }
+                if (inputVal.length) {
+                    $.get("car/products?", {term: inputVal}).done(function(data) {
+                        // Display the returned data in the resultDropdown
+                        resultDropdown.html(data);
+                    });
+                } else {
+                    resultDropdown.empty();
+                }
+            });
         });
-
-        // Hide the result dropdown when clicking outside of it
-        $(document).on("click", function (e) {
-            if ($(e.target).is(".search-box input[type='text']") === false) {
-                $(".result").empty();
-            }
-        });
-    });
     </script>
 {% endblock %}
 
@@ -200,17 +184,19 @@
                                     {% for p in products %}
                                     <div class="col-xl-4 col-sm-6">
                                         <div class="card">
-                                            <div class="card-body">
+                                            <div class="card-body product_data">
                                                 <div class="product-img position-relative" href="{% url 'car-productdetail' p.pid %}">
 {#                                                    <div class="avatar-sm product-ribbon">#}
 {#                                                        <span class="avatar-title rounded-circle  bg-primary">#}
 {#                                                            - 25 %#}
 {#                                                        </span>#}
 {#                                                    </div>#}
+                                                    {% csrf_token %}
+                                                    <input type="hidden" value="{{ p.pid }}" class="prod_id">
                                                     <a href="{% url 'car-productdetail' p.pid %}" class="d-block">
                                                         <img src="{{ p.image.url }}" style="width:250px;height:250px;" alt="" class="img-fluid mx-auto d-block product-img">
                                                     </a>
-                                                    <button onclick="addToCart({{ p.pid }})" class="btn dripicons-cart btn-primary btn-rounded bg-gradient add-to-cart">Add to cart</button>
+                                                        <button id="addToCartBtn" type="button" class="btn dripicons-cart btn-primary btn-rounded bg-gradient add-to-cart addToCartBtn">Add to cart</button>
                                                 </div>
                                                 <div class="mt-4 text-center">
                                                     <h5 class="mb-3 text-truncate"><a href="{% url 'car-productdetail' p.pid %}" class="text-dark">{{ p.title }}</a></h5>
@@ -259,6 +245,8 @@
                                 </ul>
                             </div>
                         </div>
+                     </div>
+                        </div>
 
 {% endblock %}
 
@@ -267,6 +255,7 @@
         <script src="{% static 'libs/ion-rangeslider/js/ion.rangeSlider.min.js' %}"></script>
 
         <!-- init js -->
+        <script src="{% static 'js/pages/add-to-cart.init.js' %}"></script>
         <script src="{% static 'js/pages/product-filter-range.init.js' %}"></script>
 
 {% endblock %}
