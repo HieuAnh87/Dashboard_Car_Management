@@ -1,3 +1,4 @@
+import jsonfield as jsonfield
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -146,7 +147,8 @@ class CartOrder(models.Model):
 
 
 class CartOrderItems(models.Model):
-    cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='cart_order_items')
+    # cart_order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='cart_order_items')
+    coid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='coi', alphabet="abcdefgh12345")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_order_items')
 
     grand_total = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
@@ -157,7 +159,8 @@ class CartOrderItems(models.Model):
         verbose_name_plural = 'CartOrderItems'
 
     def __str__(self):
-        return self.cart_order.cid
+        return self.coid
+
 
 
 class Order(models.Model):
@@ -165,10 +168,13 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    cart_order_items = models.ForeignKey(CartOrderItems, on_delete=models.CASCADE)
-    date_created = models.DateTimeField(auto_now_add=True)
+    # cart_order_items = models.ForeignKey(CartOrderItems, on_delete=models.CASCADE)
 
-    invoice_file = models.BinaryField(null=True, blank=True)
+    grand_total = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+    tax = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+    total_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
+
+    date_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = 'Order'
@@ -183,7 +189,11 @@ class Invoice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    prod = jsonfield.JSONField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
+
+    invoice_file = models.BinaryField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Invoice'

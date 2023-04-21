@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice
 
 
 # Add to cart
@@ -58,8 +58,7 @@ def update_cart_item(request):
             except CartOrderItems.DoesNotExist:
                 print('CartOrderItems.DoesNotExist')
                 # ValueError: Cannot assign "1": "CartOrderItems.user" must be a "User" instance.
-                CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total,
-                                              cart_order=cart_item)
+                CartOrderItems.objects.create(user=request.user, grand_total=subtotal, tax=tax, total_price=total)
             return JsonResponse({'success': 'Cart item updated.',
                                  'total_price': total_price,
                                  'subtotal': str(subtotal),
@@ -260,7 +259,7 @@ class CheckOutView(LoginRequiredMixin, View):
                                                                                   'address': address, 'city': city,
                                                                                   'district': district, 'ward': ward})
 
-        order = Order(user=request.user, customer=customer, cart_order_items=cart_order_item)
+        order = Order(user=request.user, customer=customer)
         order.save()
         return redirect('/car/invoice/' + str(order.oid))
 
@@ -286,11 +285,13 @@ class InvoiceView(LoginRequiredMixin, View):
         order = Order.objects.filter(oid=oid).first()
         customer = Customer.objects.filter(id=order.customer.id).first()
         cart_item = CartOrder.objects.filter(user=request.user.id)
+        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
         context = {
             'heading': "Invoice",
             'pageview': "Car Management",
             'order': order,
             'customer': customer,
             'cart_item': cart_item,
+            'cart_order_item': cart_order_item,
         }
         return render(request, 'car/car-invoicedetail.html', context)
