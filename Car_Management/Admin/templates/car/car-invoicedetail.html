@@ -105,3 +105,27 @@
 
                 
 {% endblock %}
+
+{% block extra_javascript %}
+    <script>
+    $(document).ready(function() {
+      $('.send-invoice').on('click', function() {
+            var oid = $(this).data('oid');
+            $.ajax({
+              url: '',
+              method: 'POST',
+              data: {
+                'oid': oid,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              success: function(response) {
+                  console.log(response);
+              },
+              error: function(xhr, status, error) {
+                console.error(error);
+              }
+            });
+          });
+    });
+    </script>
+{% endblock %}

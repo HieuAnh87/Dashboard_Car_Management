@@ -260,6 +260,9 @@ class CheckOutView(LoginRequiredMixin, View):
                                                                                   'district': district, 'ward': ward})
 
         order = Order(user=request.user, customer=customer)
+        order.grand_total = cart_order_item.grand_total
+        order.tax = cart_order_item.tax
+        order.total_price = cart_order_item.total_price
         order.save()
         return redirect('/car/invoice/' + str(order.oid))
 
@@ -295,3 +298,31 @@ class InvoiceView(LoginRequiredMixin, View):
             'cart_order_item': cart_order_item,
         }
         return render(request, 'car/car-invoicedetail.html', context)
+
+    def post(self, request, oid):
+        order = Order.objects.filter(oid=oid).first()
+        customer = Customer.objects.filter(id=order.customer.id).first()
+        cart_item = CartOrder.objects.filter(user=request.user.id)
+        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+
+        invoice = Invoice(order=order,
+                          customer=customer,
+                          user=request.user)
+        invoice_prod = {index + 1: [item.product.title, item.quantity, int(item.get_price())] for index, item in
+                        enumerate(cart_item)}
+        invoice.prod = invoice_prod
+        invoice.save()
+        cart_item.delete()
+        cart_order_item.delete()
+        return redirect('/car/orders')
+
+
+class InvoiceListView(LoginRequiredMixin, View):
+    def get(self, request):
+        # invoices = Invoice.objects.filter(user=request.user.id)
+        context = {
+            'heading': "Invoices",
+            'pageview': "Car Management",
+            # 'invoices': invoices,
+        }
+        return render(request, 'car/car-invoicelist.html', context)
