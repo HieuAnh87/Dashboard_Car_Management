@@ -306,11 +306,21 @@ class InvoiceView(LoginRequiredMixin, View):
             cart_item = CartOrder.objects.filter(user=request.user.id)
             cart_order_item = CartOrderItems.objects.get(user=request.user.id)
 
+            prod_images = [item.product.image.url for item in cart_item]
+
             invoice = Invoice(order=order,
                               customer=customer,
                               user=request.user)
-            invoice_prod = {index + 1: [item.product.title, float(item.product.price), item.quantity, int(item.get_price())] for index, item in
-                            enumerate(cart_item)}
+            invoice_prod = {
+                index + 1: [item.product.title, '', float(item.product.price), item.quantity, int(item.get_price())] for
+                index, item in
+                enumerate(cart_item)}
+            for index, prod_image in enumerate(prod_images):
+                if index == len(invoice_prod):
+                    break
+                # add prod_image to invoice_prod
+                invoice_prod[index + 1][1] = prod_image
+                print(invoice_prod[index + 1][1])
             invoice.prod = invoice_prod
             invoice.save()
             cart_item.delete()
