@@ -15,4 +15,4 @@ class InvoiceDetailView(LoginRequiredMixin,View):
         greeting = {}
         greeting['heading'] = "Invoice Detail"
         greeting['pageview'] = "Invoices"
-        return render (request,'invoices/invoicedetail.html',greeting)        
+        return render (request,'invoices/car-invoicedetail.html',greeting)

@@ -19,7 +19,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 
 class CartOrderItemsAdmin(admin.ModelAdmin):
-    list_display = ['cart_order', 'total_price']
+    list_display = ['total_price']
 
 
 class CartOrderAdmin(admin.ModelAdmin):
