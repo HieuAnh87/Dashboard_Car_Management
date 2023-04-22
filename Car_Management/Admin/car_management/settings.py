@@ -37,7 +37,9 @@ SECRET_KEY = 'd!m50t)w$$&ff(*pn7%oqw-1yxo+eub*xcxd^8pzo=*2)ynq=w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '2da188c804ec.ngrok.io']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://car-management.herokuapp.com/']
+ALLOWED_HOSTS = ['https://car-management.herokuapp.com/', '127.0.0.1']
+
 
 # Application definition
 
