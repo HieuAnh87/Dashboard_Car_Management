@@ -1,7 +1,6 @@
 import jsonfield as jsonfield
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
 from django.utils.safestring import mark_safe
 from shortuuid.django_fields import ShortUUIDField
 
@@ -163,6 +162,7 @@ class CartOrderItems(models.Model):
 
 
 
+
 class Order(models.Model):
     oid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='ord', alphabet="abcdefgh12345")
 
@@ -182,6 +182,9 @@ class Order(models.Model):
     def __str__(self):
         return self.oid
 
+    def format_day_month_year(self):
+        return self.date_created.strftime('%d %b %Y')
+
 
 class Invoice(models.Model):
     iid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='inv', alphabet="abcdefgh12345")
@@ -192,8 +195,6 @@ class Invoice(models.Model):
 
     prod = jsonfield.JSONField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
-
-    invoice_file = models.BinaryField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Invoice'

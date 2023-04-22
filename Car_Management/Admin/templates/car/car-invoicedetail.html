@@ -70,7 +70,7 @@
                                                 {% endfor %}
                                                     <tr>
                                                         <td colspan="2" class="text-end">Sub Total</td>
-                                                        <td class="text-end">${{ cart_order_items.grand_total }}</td>
+                                                        <td class="text-end">${{ order.grand_total }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2" class="border-0 text-end">
@@ -80,12 +80,12 @@
                                                     <tr>
                                                         <td colspan="2" class="border-0 text-end">
                                                             <strong>Tax</strong></td>
-                                                        <td class="border-0 text-end">- ${{ cart_order_items.tax }}</td>
+                                                        <td class="border-0 text-end">- ${{ order.tax }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2" class="border-0 text-end">
                                                             <strong>Total</strong></td>
-                                                        <td class="border-0 text-end"><h4 class="m-0">${{ cart_order_items.total_price }}</h4></td>
+                                                        <td class="border-0 text-end"><h4 class="m-0">${{ order.total_price }}</h4></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -94,7 +94,7 @@
                                             <div class="float-end">
                                                 {% csrf_token %}
                                                 <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
-                                                <a href="{% url 'car-orders' %}" data-oid="{{ order.oid }}"  class="btn btn-primary w-md waves-effect waves-light send-invoice">Send</a>
+                                                <a href="{% url 'car-invoices' %}" data-oid="{{ order.oid }}"  class="btn btn-primary w-md waves-effect waves-light send-invoice">Send</a>
                                             </div>
                                         </div>
                                     </div>

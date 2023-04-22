@@ -1,8 +1,9 @@
+import json
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
@@ -239,7 +240,6 @@ class CheckOutView(LoginRequiredMixin, View):
         address = request.POST.get('billing-address')
         city = request.POST.get('city')
         district = request.POST.get('district')
-
         ward = request.POST.get('ward')
 
         cart_items = CartOrder.objects.filter(user=request.user.id)
@@ -300,29 +300,34 @@ class InvoiceView(LoginRequiredMixin, View):
         return render(request, 'car/car-invoicedetail.html', context)
 
     def post(self, request, oid):
-        order = Order.objects.filter(oid=oid).first()
-        customer = Customer.objects.filter(id=order.customer.id).first()
-        cart_item = CartOrder.objects.filter(user=request.user.id)
-        cart_order_item = CartOrderItems.objects.get(user=request.user.id)
+        try:
+            order = Order.objects.filter(oid=oid).first()
+            customer = Customer.objects.filter(id=order.customer.id).first()
+            cart_item = CartOrder.objects.filter(user=request.user.id)
+            cart_order_item = CartOrderItems.objects.get(user=request.user.id)
 
-        invoice = Invoice(order=order,
-                          customer=customer,
-                          user=request.user)
-        invoice_prod = {index + 1: [item.product.title, item.quantity, int(item.get_price())] for index, item in
-                        enumerate(cart_item)}
-        invoice.prod = invoice_prod
-        invoice.save()
-        cart_item.delete()
-        cart_order_item.delete()
-        return redirect('/car/orders')
+            invoice = Invoice(order=order,
+                              customer=customer,
+                              user=request.user)
+            invoice_prod = {index + 1: [item.product.title, float(item.product.price), item.quantity, int(item.get_price())] for index, item in
+                            enumerate(cart_item)}
+            invoice.prod = invoice_prod
+            invoice.save()
+            cart_item.delete()
+            cart_order_item.delete()
+            return redirect('/car/orders')
+        except Exception as e:
+            print(f"Error encoding invoice as JSON: {e}")
+            return HttpResponseServerError("Could not complete request")
 
 
 class InvoiceListView(LoginRequiredMixin, View):
     def get(self, request):
-        # invoices = Invoice.objects.filter(user=request.user.id)
+        # get all invoices from database
+        invoices = Invoice.objects.all()
         context = {
             'heading': "Invoices",
             'pageview': "Car Management",
-            # 'invoices': invoices,
+            'invoices': invoices,
         }
         return render(request, 'car/car-invoicelist.html', context)
