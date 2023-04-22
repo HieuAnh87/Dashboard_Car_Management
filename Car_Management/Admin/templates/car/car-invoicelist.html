@@ -51,19 +51,19 @@
                                                                 <label class="form-check-label" for="orderidcheck01"></label>
                                                             </div>
                                                         </td>
-                                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2540</a> </td>
-                                                        <td>Neal Matthews</td>
+                                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ invoice.iid }}</a> </td>
+                                                        <td>{{ invoice.customer.name }}</td>
                                                         <td>
-                                                            07 Oct, 2019
+                                                            {{ invoice.order.date }}
                                                         </td>
                                                         <td>
-                                                            $400
+                                                            ${{ invoice.order.total_price }}
                                                         </td>
                                                         <td>
                                                             <span class="badge badge-pill badge-soft-success font-size-12">Paid</span>
                                                         </td>
                                                         <td>
-                                                            <i class="fab fa-cc-mastercard me-1"></i> Mastercard
+                                                            <i class="fab fa-cc-mastercard me-1"></i> Cash
                                                         </td>
                                                         <td>
                                                             <!-- Button trigger modal -->
@@ -148,7 +148,7 @@
                                                     <h6 class="m-0 text-right">Sub Total:</h6>
                                                 </td>
                                                 <td>
-                                                    $ {{ order.grand_total }}
+                                                    $ {{ invoice.order.grand_total }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -164,7 +164,7 @@
                                                     <h6 class="m-0 text-right">Total:</h6>
                                                 </td>
                                                 <td>
-                                                    $ 400
+                                                    $ {{ invoice.order.total_price }}
                                                 </td>
                                             </tr>
                                         </tbody>

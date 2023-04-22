@@ -320,7 +320,6 @@ class InvoiceView(LoginRequiredMixin, View):
                     break
                 # add prod_image to invoice_prod
                 invoice_prod[index + 1][1] = prod_image
-                print(invoice_prod[index + 1][1])
             invoice.prod = invoice_prod
             invoice.save()
             cart_item.delete()
@@ -333,7 +332,6 @@ class InvoiceView(LoginRequiredMixin, View):
 
 class InvoiceListView(LoginRequiredMixin, View):
     def get(self, request):
-        # get all invoices from database
         invoices = Invoice.objects.all()
         context = {
             'heading': "Invoices",
