@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 
+import django_heroku
 from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
@@ -221,3 +222,5 @@ JAZZMIN_SETTINGS = {
     'site_title': 'Car Management Website',
     'welcome_sign': 'Welcome to Car Management Website',
 }
+# Activate Django-Heroku.
+django_heroku.settings(locals())

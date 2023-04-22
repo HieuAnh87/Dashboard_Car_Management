@@ -1,3 +1,7 @@
 web: gunicorn car_management.wsgi
 heroku ps:scale web=1
-heroku run python manage.py migrate
+heroku run python3 manage.py makemigrations
+heroku run python3 manage.py migrate
+heroku run python3 manage.py collectstatic
+
+
