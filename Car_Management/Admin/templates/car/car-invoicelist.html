@@ -67,7 +67,7 @@
                                                         </td>
                                                         <td>
                                                             <!-- Button trigger modal -->
-                                                            <button type="button" class="btn btn-primary btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target=".orderdetailsModal">
+                                                            <button type="button" class="btn btn-primary btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target=".orderdetailsModal-{{ invoice.iid }}">
                                                                 View Details
                                                             </button>
                                                         </td>
@@ -106,7 +106,7 @@
                         <!-- end row -->
                 <!-- Modal -->
                 {% for invoice in invoices %}
-                <div class="modal fade orderdetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
+                <div class="modal fade orderdetailsModal-{{ invoice.iid }}" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
