@@ -43,18 +43,6 @@ urlpatterns = [
     path('filemanager', views.FileManagerView.as_view(), name='filemanager'),
     # Ecommerce
     path('ecommerce/', include("ecommerce.urls")),
-    # Crypto
-    path('crypto/', include('crypto.urls')),
-    # Email
-    path("email/", include("e_mail.urls")),
-    # Invoices
-    path('invoices/', include('invoices.urls')),
-    # Projects
-    path('projects/', include('projects.urls')),
-    # Tasks
-    path('tasks/', include('tasks.urls')),
-    # Blog
-    path('blog/', include('blog.urls')),
     # Blog
     path('contacts/', include('contacts.urls')),
     # Authencation
