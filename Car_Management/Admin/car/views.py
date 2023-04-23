@@ -255,9 +255,13 @@ class CheckOutView(LoginRequiredMixin, View):
                 statistics_prod.save()
 
         cart_order_item = CartOrderItems.objects.get(user=request.user.id)
-        customer, created = Customer.objects.get_or_create(email=email, defaults={'name': name, 'contact': contact,
-                                                                                  'address': address, 'city': city,
-                                                                                  'district': district, 'ward': ward})
+        customer = Customer.objects.filter(email=email).first()
+        if customer is None:
+            customer = Customer(email=email, name=name, contact=contact, address=address, city=city,
+                                district=district, ward=ward)
+            customer.save()
+            # customer, created = Customer.objects.get_or_create(email=email, defaults={'name': name, 'contact':
+            # contact, 'address': address, 'city': city, 'district': district, 'ward': ward})
 
         order = Order(user=request.user, customer=customer)
         order.grand_total = cart_order_item.grand_total
