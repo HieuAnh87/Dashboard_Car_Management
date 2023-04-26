@@ -39,7 +39,6 @@
                                                         <th class="align-middle">Payment Status</th>
                                                         <th class="align-middle">Payment Method</th>
                                                         <th class="align-middle">View Details</th>
-                                                        <th class="align-middle">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -54,7 +53,7 @@
                                                         <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ invoice.iid }}</a> </td>
                                                         <td>{{ invoice.customer.name }}</td>
                                                         <td>
-                                                            {{ invoice.order.date }}
+                                                            {{ invoice.order.format_day_month_year }}
                                                         </td>
                                                         <td>
                                                             ${{ invoice.order.total_price }}
@@ -70,12 +69,6 @@
                                                             <button type="button" class="btn btn-primary btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target=".orderdetailsModal-{{ invoice.iid }}">
                                                                 View Details
                                                             </button>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex gap-3">
-                                                                <a href="javascript:void(0);" class="text-success"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                                <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-delete font-size-18"></i></a>
-                                                            </div>
                                                         </td>
                                                     </tr>
                                                 {% endfor %}

@@ -309,9 +309,14 @@ class InvoiceView(LoginRequiredMixin, View):
             customer = Customer.objects.filter(id=order.customer.id).first()
             cart_item = CartOrder.objects.filter(user=request.user.id)
             cart_order_item = CartOrderItems.objects.get(user=request.user.id)
-
+            # Decrease product stock count
+            for prod in cart_item:
+                product = Products.objects.filter(id=prod.product.id).first()
+                product.stock_count = int(product.stock_count) - int(prod.quantity)
+                product.save()
+            # take image of product
             prod_images = [item.product.image.url for item in cart_item]
-
+            # create invoice
             invoice = Invoice(order=order,
                               customer=customer,
                               user=request.user)
