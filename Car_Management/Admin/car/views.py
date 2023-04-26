@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier
 
 
 # Add to cart
@@ -96,17 +96,23 @@ class ProductsView(LoginRequiredMixin, View):
     def get(self, request):
         # Get all products ordered by title
         products = Products.objects.order_by('-title')
+        # Get all suppliers ordered by name
+        suppliers = Supplier.objects.order_by('-name')
         # Get the category from the request's GET parameters
         category = request.GET.get('category')
         if category:
             products = products.filter(category=category)  # Filter products by category if category is provided
+        supplier_id = request.GET.get('supplier')
+        if supplier_id:
+            products = products.filter(supplier=supplier_id)  # Filter products by supplier if supplier is provided
+
         search_query = request.GET.get('search')
         # SEARCH by title
         if search_query:
             products = products.filter(
                 title__icontains=search_query)  # Filter products by title if search query is provided
         # Create a Paginator object with 6 items per page
-        paginator = Paginator(products, 6)
+        paginator = Paginator(products, 9)
         # Get the current page number from the request's GET parameters
         page_number = request.GET.get('page')
         # Get the Page object for the current page
@@ -115,6 +121,7 @@ class ProductsView(LoginRequiredMixin, View):
         except PageNotAnInteger:
             paginated_products = paginator.page(1)
         context = {
+            'suppliers': suppliers,
             'products': paginated_products,
             'heading': "Products",
             'pageview': "Car Management"}
@@ -309,9 +316,14 @@ class InvoiceView(LoginRequiredMixin, View):
             customer = Customer.objects.filter(id=order.customer.id).first()
             cart_item = CartOrder.objects.filter(user=request.user.id)
             cart_order_item = CartOrderItems.objects.get(user=request.user.id)
-
+            # Decrease product stock count
+            for prod in cart_item:
+                product = Products.objects.filter(id=prod.product.id).first()
+                product.stock_count = int(product.stock_count) - int(prod.quantity)
+                product.save()
+            # take image of product
             prod_images = [item.product.image.url for item in cart_item]
-
+            # create invoice
             invoice = Invoice(order=order,
                               customer=customer,
                               user=request.user)
