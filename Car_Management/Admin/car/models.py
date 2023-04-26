@@ -52,13 +52,20 @@ class Customer(models.Model):
 
 class Supplier(models.Model):
     sid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='sup', alphabet="abcdefgh12345")
-
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=100, default='123 Street')
+    email = models.EmailField(max_length=100, default='test@gmail.com')
+    image = models.ImageField(upload_to="supplier-images", default="supplier.png")
+    address = models.CharField(max_length=100, default='111 Tran Phu')
     contact = models.CharField(max_length=100, default='0123456789')
 
     class Meta:
         verbose_name_plural = 'Supplier'
+
+    def supplier_image(self):
+        if self.image:
+            return mark_safe('<img src="%s" width="50" height="50" />' % self.image.url)
+        else:
+            return 'No Image Found'
 
     def __str__(self):
         return self.name
@@ -66,6 +73,8 @@ class Supplier(models.Model):
 
 class Products(models.Model):
     pid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='prd', alphabet="abcdefgh12345")
+
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name='products')
 
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to=product_directory_path)
@@ -76,7 +85,6 @@ class Products(models.Model):
     price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
     old_price = models.DecimalField(max_digits=65, decimal_places=2, default="1.99")
 
-    type = models.CharField(max_length=100, default='This is the product', null=True, blank=True)
     stock_count = models.CharField(max_length=100, default='8', null=True, blank=True)
 
     status = models.BooleanField(default=True)  # active or not
@@ -91,8 +99,9 @@ class Products(models.Model):
         else:
             return 'No Image Found'
 
-    def profit(self):
-        return self.price - self.cost_price
+    def get_profit(self):
+        profit = self.price - self.cost_price
+        return int(profit)
 
     def get_percentage(self):
         new_price = ((self.old_price - self.price) / self.old_price) * 100

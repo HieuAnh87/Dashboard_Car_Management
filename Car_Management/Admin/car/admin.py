@@ -9,9 +9,13 @@ class ProductImagesAdmin(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['pid', 'title', 'product_image', 'category', 'price', 'cost_price', 'description', 'type',
+    list_display = ['pid', 'title', 'product_image', 'category', 'supplier', 'price', 'cost_price', 'description',
                     'stock_count', 'status', 'in_stock']
     inlines = [ProductImagesAdmin]
+
+
+class SupplierAdmin(admin.ModelAdmin):
+    list_display = ['sid', 'name', 'email', 'supplier_image', 'address', 'contact']
 
 
 class CustomerAdmin(admin.ModelAdmin):
@@ -33,7 +37,7 @@ class ReportAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Products, ProductAdmin)
-admin.site.register(Supplier)
+admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(CartOrderItems, CartOrderItemsAdmin)
 admin.site.register(CartOrder, CartOrderAdmin)
