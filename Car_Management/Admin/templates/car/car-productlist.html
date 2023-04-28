@@ -42,7 +42,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for invoice in invoices %}
+                                                {% for prod in products %}
                                                     <tr>
                                                         <td>
                                                             <div class="form-check font-size-16">
@@ -50,8 +50,8 @@
                                                                 <label class="form-check-label" for="orderidcheck01"></label>
                                                             </div>
                                                         </td>
-                                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ invoice.iid }}</a> </td>
-                                                        <td>{{ invoice.customer.name }}</td>
+                                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ prod.sid }}</a> </td>
+                                                        <td>{{ prod.title }}</td>
                                                         <td>
                                                             {{ invoice.order.format_day_month_year }}
                                                         </td>

@@ -285,13 +285,49 @@ class ShopsView(LoginRequiredMixin, View):
         greeting['pageview'] = "Car Management"
         return render(request, 'car/car-shops.html', greeting)
 
+class ProductListView(LoginRequiredMixin, View):
+    def get(self, request):
+        products = Products.objects.all()
+        context = {
+            'heading': "Product List",
+            'pageview': "Car Management",
+            'products': products,
+        }
+        return render(request, 'car/car-productlist.html', context)
 
 class AddProductView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Add Product"
-        greeting['pageview'] = "Car Management"
-        return render(request, 'car/car-addproduct.html', greeting)
+        suppliers = Supplier.objects.all()
+        # print(suppliers)
+
+        context = {
+            'heading': "Add Product",
+            'pageview': "Car Management",
+            'suppliers': suppliers,
+        }
+        return render(request, 'car/car-addproduct.html', context)
+
+    def post(self, request):
+        if request.method == "POST":
+            name = request.POST.get('productname')
+            supplier = request.POST.get('supplier')
+            price = request.POST.get('price')
+            image = request.FILES.get('image')
+
+            print(name, supplier, price, image)
+        return render(request, 'car/car-addproduct.html')
+
+
+class EditProductView(LoginRequiredMixin, View):
+    def get(self, request, pid):
+        product = Product.objects.filter(id=pid).first()
+        context = {
+            'heading': "Edit Product",
+            'pageview': "Car Management",
+            'product': product,
+        }
+
+        return render(request, 'car/car-editproduct.html', context)
 
 
 class InvoiceView(LoginRequiredMixin, View):
