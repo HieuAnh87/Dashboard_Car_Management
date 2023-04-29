@@ -1,14 +1,17 @@
 import json
+import os
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import JsonResponse, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier, \
+    CATEGORY_TYPE, product_directory_path
 
 
 # Add to cart
@@ -286,12 +289,81 @@ class ShopsView(LoginRequiredMixin, View):
         return render(request, 'car/car-shops.html', greeting)
 
 
+class ProductListView(LoginRequiredMixin, View):
+    def get(self, request):
+        products = Products.objects.all()
+        context = {
+            'heading': "Product List",
+            'pageview': "Car Management",
+            'products': products,
+        }
+        return render(request, 'car/car-productlist.html', context)
+
+
 class AddProductView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Add Product"
-        greeting['pageview'] = "Car Management"
-        return render(request, 'car/car-addproduct.html', greeting)
+        suppliers = Supplier.objects.all()
+        # print(suppliers)
+
+        context = {
+            'heading': "Add Product",
+            'pageview': "Car Management",
+            'suppliers': suppliers,
+        }
+        return render(request, 'car/car-addproduct.html', context)
+
+    def post(self, request):
+        name = request.POST.get('productname')
+        supplier = request.POST.get('supplier')
+        supplier = Supplier.objects.filter(id=supplier).first()
+        image = request.FILES.get('image')
+        category = request.POST.get('category')
+        cost = request.POST.get('cost')
+        price = request.POST.get('price')
+        quantity = request.POST.get('quantity')
+        description = request.POST.get('description')
+
+        product = Products(title=name, supplier=supplier, category=category,
+                           cost_price=cost, price=price, stock_count=quantity,
+                           description=description)
+        if image:
+            file_path = os.path.join('products', image.name)
+            image_name = default_storage.save(file_path, image)
+            product.image = image_name
+        product.save()
+
+        return redirect('/car/productlist')
+
+
+class EditProductView(LoginRequiredMixin, View):
+    def get(self, request, pid):
+        product = Products.objects.filter(pid=pid).first()
+        context = {
+            'heading': "Edit Product",
+            'pageview': "Car Management",
+            'product': product,
+        }
+        return render(request, 'car/car-editproduct.html', context)
+
+    def post(self, request, pid):
+        product = Products.objects.filter(pid=pid).first()
+        title = request.POST.get('title', product.title)
+        category = request.POST.get('category', product.category)
+        supplier = request.POST.get('supplier', product.supplier.id)
+        cost = request.POST.get('cost', product.cost_price)
+        price = request.POST.get('price', product.price)
+        quantity = request.POST.get('quantity', product.quantity)
+        description = request.POST.get('description', product.description)
+
+        product.title = title
+        # product.supplier = supplier
+        # product.category = category
+        product.cost_price = cost
+        product.price = price
+        product.quantity = quantity
+        product.description = description
+        product.save()
+        return redirect('/car/productlist')
 
 
 class InvoiceView(LoginRequiredMixin, View):
