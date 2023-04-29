@@ -2,13 +2,15 @@ import json
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import JsonResponse, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier, \
+    CATEGORY_TYPE, product_directory_path
 
 
 # Add to cart
@@ -310,14 +312,25 @@ class AddProductView(LoginRequiredMixin, View):
         return render(request, 'car/car-addproduct.html', context)
 
     def post(self, request):
-        if request.method == "POST":
-            name = request.POST.get('productname')
-            supplier = request.POST.get('supplier')
-            price = request.POST.get('price')
-            image = request.FILES.get('image')
+        name = request.POST.get('productname')
+        supplier = request.POST.get('supplier')
+        supplier = Supplier.objects.filter(id=supplier).first()
+        image = request.FILES.get('image')
+        category = request.POST.get('category')
+        cost = request.POST.get('cost')
+        price = request.POST.get('price')
+        quantity = request.POST.get('quantity')
+        description = request.POST.get('description')
 
-            print(name, supplier, price, image)
-        return render(request, 'car/car-addproduct.html')
+        product = Products(title=name, supplier=supplier, category=category,
+                           cost_price=cost, price=price, stock_count=quantity,
+                           description=description)
+        if image:
+            image_name = default_storage.save(image.name, image)
+            product.image = image_name
+        product.save()
+        
+        return redirect('/car/productlist')
 
 
 class EditProductView(LoginRequiredMixin, View):
@@ -337,6 +350,7 @@ class EditProductView(LoginRequiredMixin, View):
         supplier = request.POST.get('supplier', product.supplier.id)
         cost = request.POST.get('cost', product.cost_price)
         price = request.POST.get('price', product.price)
+        quantity = request.POST.get('quantity', product.quantity)
         description = request.POST.get('description', product.description)
 
         product.title = title
@@ -344,6 +358,7 @@ class EditProductView(LoginRequiredMixin, View):
         # product.category = category
         product.cost_price = cost
         product.price = price
+        product.quantity = quantity
         product.description = description
         product.save()
         return redirect('/car/productlist')
