@@ -1,4 +1,5 @@
 import json
+import os
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -326,10 +327,11 @@ class AddProductView(LoginRequiredMixin, View):
                            cost_price=cost, price=price, stock_count=quantity,
                            description=description)
         if image:
-            image_name = default_storage.save(image.name, image)
+            file_path = os.path.join('products', image.name)
+            image_name = default_storage.save(file_path, image)
             product.image = image_name
         product.save()
-        
+
         return redirect('/car/productlist')
 
 
