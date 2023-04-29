@@ -37,9 +37,9 @@
                                                         <th class="align-middle">Product Name</th>
                                                         <th class="align-middle">Price</th>
                                                         <th class="align-middle">Quantity</th>
-                                                        <th class="align-middle">Payment Status</th>
+                                                        <th class="align-middle">Category</th>
                                                         <th class="align-middle">Payment Method</th>
-                                                        <th class="align-middle"></th>
+                                                        <th class="align-middle">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -57,19 +57,22 @@
                                                         </th>
                                                         <td>{{ prod.title }}</td>
                                                         <td>
-                                                            ${{ prod.stock_count }}
+                                                            ${{ prod.price }}
                                                         </td>
                                                         <td>
-                                                            <span class="badge badge-pill badge-soft-success font-size-12">Paid</span>
+                                                            {{ prod.stock_count }}
+                                                        </td>
+                                                        <td>
+                                                            {{ prod.category }}
                                                         </td>
                                                         <td>
                                                             <i class="fab fa-cc-mastercard me-1"></i> Cash
                                                         </td>
                                                         <td>
-                                                            <!-- Button trigger modal -->
-                                                            <button type="button" class="btn btn-primary btn-sm btn-rounded" data-bs-toggle="modal" data-bs-target=".orderdetailsModal-{{ invoice.iid }}">
-                                                                View Details
-                                                            </button>
+                                                            <div class="d-flex gap-3">
+                                                                <a href="{% url 'car-editproduct' prod.pid %}" class="text-success"><i class="mdi mdi-pencil font-size-18"></i></a>
+                                                                <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-delete font-size-18"></i></a>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 {% endfor %}
@@ -98,80 +101,5 @@
                             </div>
                         </div>
                         <!-- end row -->
-                <!-- Modal -->
-                {% for invoice in invoices %}
-                <div class="modal fade orderdetailsModal-{{ invoice.iid }}" tabindex="-1" role="dialog" aria-labelledby="orderdetailsModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="orderdetailsModalLabel">Order Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="mb-2">Product id: <span class="text-primary">#{{ invoice.iid }}</span></p>
-                                <p class="mb-4">Billing Name: <span class="text-primary">{{ invoice.customer.name }}</span></p>
-
-                                <div class="table-responsive">
-                                    <table class="table align-middle table-nowrap">
-                                        <thead>
-                                            <tr>
-                                            <th scope="col">Product</th>
-                                            <th scope="col">Product Name</th>
-                                            <th scope="col">Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for item in invoice.prod.items %}
-                                            <tr>
-                                                <th scope="row">
-                                                    <div>
-                                                        <img src="{{ item.1.1 }}" alt="" class="avatar-sm">
-                                                    </div>
-                                                </th>
-                                                <td>
-                                                    <div>
-                                                        <h5 class="text-truncate font-size-14">{{ item.1.0 }}</h5>
-                                                        <p class="text-muted mb-0">$ {{ item.1.2 }} x {{ item.1.3 }}</p>
-                                                    </div>
-                                                </td>
-                                                <td>$ {{ item.1.4 }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                            <tr>
-                                                <td colspan="2">
-                                                    <h6 class="m-0 text-right">Sub Total:</h6>
-                                                </td>
-                                                <td>
-                                                    $ {{ invoice.order.grand_total }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    <h6 class="m-0 text-right">Shipping:</h6>
-                                                </td>
-                                                <td>
-                                                    Free
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    <h6 class="m-0 text-right">Total:</h6>
-                                                </td>
-                                                <td>
-                                                    $ {{ invoice.order.total_price }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <!-- end modal -->
                 
 {% endblock %}
