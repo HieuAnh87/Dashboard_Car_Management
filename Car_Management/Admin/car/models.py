@@ -25,6 +25,7 @@ CATEGORY_TYPE = [
     ('car exterior', 'Car Exterior'),
     ('car accessories', 'Car Accessories'),
     ('car care services', 'Car Care Services'),
+    ('car parts', 'Car Parts')
 ]
 
 
