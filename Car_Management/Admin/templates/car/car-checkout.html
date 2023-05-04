@@ -112,9 +112,9 @@ assets
                                                                             <th scope="row"><img src="{{ item.product.image.url }}" alt="product-img" title="product-img" class="avatar-md"></th>
                                                                             <td>
                                                                                 <h5 class="font-size-14 text-truncate"><a href="" class="text-dark">{{ item.product.title }} </a></h5>
-                                                                                <p class="text-muted mb-0">$ {{ item.product.price }} x {{ item.quantity }}</p>
+                                                                                <p class="text-muted mb-0">{{ item.product.price }} x {{ item.quantity }} VND</p>
                                                                             </td>
-                                                                            <td>$ {{ item.get_price }}</td>
+                                                                            <td>{{ item.get_price }} VND</td>
                                                                         </tr>
                                                                         {% endfor %}
                                                                             <tr>
@@ -122,7 +122,7 @@ assets
                                                                                 <h6 class="m-0 text-end">Sub Total:</h6>
                                                                             </td>
                                                                             <td>
-                                                                                $ {{ subtotal }}
+                                                                                {{ subtotal }} VND
                                                                             </td>
                                                                             </tr>
                                                                             <tr>
@@ -145,7 +145,7 @@ assets
                                                                                     <h6 class="m-0 text-end">Total:</h6>
                                                                                 </td>
                                                                                 <td>
-                                                                                    $ {{ total }}
+                                                                                    {{ total }}  VND
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
