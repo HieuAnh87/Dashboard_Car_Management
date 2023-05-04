@@ -136,11 +136,12 @@ class ProductDetailView(LoginRequiredMixin, View):
     def get(self, request, pid):
         product = Products.objects.get(pid=pid)
         # products = Products.objects.filter(category=product.category).exclude(pid=pid)
-        greeting = {}
-        greeting['heading'] = "Product Detail"
-        greeting['pageview'] = "Car Management"
-        greeting['product'] = product
-        return render(request, 'car/car-productdetail.html', greeting)
+        context = {
+            'product': product,
+            'heading': "Product Detail",
+            'pageview': "Car Management"
+        }
+        return render(request, 'car/car-productdetail.html', context)
 
 
 class OrdersView(LoginRequiredMixin, View):
