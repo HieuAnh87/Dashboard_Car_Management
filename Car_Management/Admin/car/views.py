@@ -146,10 +146,15 @@ class ProductDetailView(LoginRequiredMixin, View):
 
 class OrdersView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Orders"
-        greeting['pageview'] = "Car Management"
-        return render(request, 'car/car-orders.html', greeting)
+        orders = Order.objects.order_by('-id')
+        context = {
+            'heading': "Orders",
+            'pageview': "Car Management",
+            'orders': orders
+
+        }
+
+        return render(request, 'car/car-orders.html', context)
 
 
 #

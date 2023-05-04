@@ -5,6 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 
+from car.models import Products, Order, Customer
+
 
 # utillity
 class DashboardView(LoginRequiredMixin, View):
@@ -17,10 +19,22 @@ class DashboardView(LoginRequiredMixin, View):
 
 class SaasView(LoginRequiredMixin, View):
     def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Saas"
-        greeting['pageview'] = "Dashboards"
-        return render(request, 'dashboard/dashboard-saas.html', greeting)
+        product = Products.objects.all()
+        order = Order.objects.all()
+        customer = Customer.objects.all()
+        total = 0
+        for order_ in order:
+            total += order_.total_price
+
+        context = {
+            'heading': "Car Management",
+            'pageview': "Dashboards",
+            'product': product,
+            'order': order,
+            'customer': customer,
+            'total': total,
+        }
+        return render(request, 'dashboard/dashboard-saas.html', context)
 
 
 class CryptoView(LoginRequiredMixin, View):

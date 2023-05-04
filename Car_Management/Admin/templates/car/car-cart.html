@@ -76,19 +76,19 @@
                                                 <tbody id="order-summary">
                                                     <tr>
                                                         <td>Grand Total :</td>
-                                                        <td>$ <span id="grand-total">{{ subtotal }}</span></td>
+                                                        <td><span id="grand-total">{{ subtotal }}</span> VND</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Discount : </td>
-                                                        <td>- $ <span id="discount-total">{{ discount }}</span></td>
+                                                        <td>- <span id="discount-total">{{ discount }}</span> VND</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Estimated Tax : </td>
-                                                        <td>$ <span id="tax-total">{{ tax }}</span></td>
+                                                        <td><span id="tax-total">{{ tax }}</span> VND</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Total :</th>
-                                                        <th>$ <span id="order-total">{{ total }}</span></th>
+                                                        <th><span id="order-total">{{ total }}</span> VND</th>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -128,8 +128,8 @@
           // Update table cells with calculated values
           $('#order-summary #subtotal').text(subtotal.toFixed(2));
           $('#order-summary #tax').text(tax.toFixed(2));
-          $('#order-summary #discount').text('- $ ' + discount.toFixed(1));
-          $('#order-summary #total').text('$ ' + total_.toFixed(1));
+          $('#order-summary #discount').text('- ' + discount.toFixed(1) + ' VND')
+          $('#order-summary #total').text(total_.toFixed(1)  + ' VND');
       }
 
       $('input[name="demo_vertical"]').on('change', function() {

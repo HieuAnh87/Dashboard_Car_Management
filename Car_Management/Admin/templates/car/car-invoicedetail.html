@@ -65,12 +65,12 @@
                                                     <tr>
                                                         <td>{{ forloop.counter }}</td>
                                                         <td>{{ item.product.title }}</td>
-                                                        <td class="text-end">${{ item.get_price }}</td>
+                                                        <td class="text-end">{{ item.get_price }} VND</td>
                                                     </tr>
                                                 {% endfor %}
                                                     <tr>
                                                         <td colspan="2" class="text-end">Sub Total</td>
-                                                        <td class="text-end">${{ order.grand_total }}</td>
+                                                        <td class="text-end">{{ order.grand_total }} VND</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2" class="border-0 text-end">
@@ -80,12 +80,12 @@
                                                     <tr>
                                                         <td colspan="2" class="border-0 text-end">
                                                             <strong>Tax</strong></td>
-                                                        <td class="border-0 text-end">- ${{ order.tax }}</td>
+                                                        <td class="border-0 text-end">+ {{ order.tax }} VND</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2" class="border-0 text-end">
                                                             <strong>Total</strong></td>
-                                                        <td class="border-0 text-end"><h4 class="m-0">${{ order.total_price }}</h4></td>
+                                                        <td class="border-0 text-end"><h4 class="m-0">{{ order.total_price }} VND</h4></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
