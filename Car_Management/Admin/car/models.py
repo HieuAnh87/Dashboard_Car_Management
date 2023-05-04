@@ -171,8 +171,6 @@ class CartOrderItems(models.Model):
         return self.coid
 
 
-
-
 class Order(models.Model):
     oid = ShortUUIDField(unique=True, length=10, max_length=20, prefix='ord', alphabet="abcdefgh12345")
 
