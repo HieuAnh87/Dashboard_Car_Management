@@ -9,7 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier, \
+    CATEGORY_TYPE
 
 
 # Add to cart
@@ -295,10 +296,26 @@ class ShopsView(LoginRequiredMixin, View):
 class ProductListView(LoginRequiredMixin, View):
     def get(self, request):
         products = Products.objects.all()
+        search_query = request.GET.get('search')
+        # SEARCH by title
+        if search_query:
+            products = products.filter(
+                title__icontains=search_query)  # Filter products by title if search query is provided
+        # Create a Paginator object with  items per page
+        paginator = Paginator(products, 15)
+        # Get the current page number from the request's GET parameters
+        page_number = request.GET.get('page')
+        # Get the Page object for the current page
+        try:
+            paginated_products = paginator.page(page_number)
+        except PageNotAnInteger:
+            paginated_products = paginator.page(1)
+
         context = {
             'heading': "Product List",
             'pageview': "Car Management",
-            'products': products,
+            'products': paginated_products,
+            # 'paginated_products': paginated_products,
         }
         return render(request, 'car/car-productlist.html', context)
 
@@ -341,10 +358,12 @@ class AddProductView(LoginRequiredMixin, View):
 class EditProductView(LoginRequiredMixin, View):
     def get(self, request, pid):
         product = Products.objects.filter(pid=pid).first()
+        categories = CATEGORY_TYPE
         context = {
             'heading': "Edit Product",
             'pageview': "Car Management",
             'product': product,
+            'categories': categories,
         }
         return render(request, 'car/car-editproduct.html', context)
 
@@ -352,7 +371,7 @@ class EditProductView(LoginRequiredMixin, View):
         product = Products.objects.filter(pid=pid).first()
         title = request.POST.get('title') or product.title
         category = request.POST.get('category') or product.category
-        supplier = request.POST.get('supplier') or product.supplier
+        supplier = request.POST.get('supplier') or product.supplier.id
         cost = request.POST.get('cost') or product.cost_price
         price = request.POST.get('price') or product.price
         quantity = request.POST.get('quantity') or product.stock_count
@@ -360,7 +379,7 @@ class EditProductView(LoginRequiredMixin, View):
 
         product.title = title
         # product.supplier = supplier
-        # product.category = category
+        product.category = category
         product.cost_price = cost
         product.price = price
         product.stock_count = quantity

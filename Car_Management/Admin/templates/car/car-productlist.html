@@ -10,8 +10,10 @@
                                             <div class="col-sm-4">
                                                 <div class="search-box me-2 mb-2 d-inline-block">
                                                     <div class="position-relative">
-                                                        <input type="text" class="form-control" placeholder="Search...">
+                                                        <form method="GET" action="{% url 'car-productlist' %}">
+                                                        <input type="text" class="form-control" name="search" placeholder="Search...">
                                                         <i class="bx bx-search-alt search-icon"></i>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -71,7 +73,7 @@
                                                         <td>
                                                             <div class="d-flex gap-3">
                                                                 <a href="{% url 'car-editproduct' prod.pid %}" class="text-success"><i class="mdi mdi-pencil font-size-18"></i></a>
-                                                                <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-delete font-size-18"></i></a>
+                                                                <a href="{% url 'car-editproduct' prod.pid %}" class="text-danger"><i class="mdi mdi-delete font-size-18"></i></a>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -80,21 +82,29 @@
                                             </table>
                                         </div>
                                         <ul class="pagination pagination-rounded justify-content-end mb-2">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                                                    <i class="mdi mdi-chevron-left"></i>
-                                                </a>
-                                            </li>
-                                            <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript: void(0);" aria-label="Next">
-                                                    <i class="mdi mdi-chevron-right"></i>
-                                                </a>
-                                            </li>
+                                            {% if products.has_other_pages %}
+                                                <ul class="pagination">
+                                                    {% if products.has_previous %}
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="?page=1">&laquo;</a>
+                                                        </li>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="?page={{ products.previous_page_number }}">{{ products.previous_page_number }}</a>
+                                                        </li>
+                                                    {% endif %}
+                                                    <li class="page-item active">
+                                                        <a class="page-link" href="?page={{ products.number }}">{{ products.number }}</a>
+                                                    </li>
+                                                    {% if products.has_next %}
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="?page={{ products.next_page_number }}">{{ products.next_page_number }}</a>
+                                                        </li>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="?page={{ products.paginator.num_pages }}">&raquo;</a>
+                                                        </li>
+                                                    {% endif %}
+                                                </ul>
+                                            {% endif %}
                                         </ul>
                                     </div>
                                 </div>
