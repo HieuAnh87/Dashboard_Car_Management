@@ -37,20 +37,20 @@ class SaasView(LoginRequiredMixin, View):
         return render(request, 'dashboard/dashboard-saas.html', context)
 
 
-class CryptoView(LoginRequiredMixin, View):
-    def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Crypto"
-        greeting['pageview'] = "Dashboards"
-        return render(request, 'dashboard/dashboard-crypto.html', greeting)
-
-
-class BlogView(LoginRequiredMixin, View):
-    def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Blog"
-        greeting['pageview'] = "Dashboards"
-        return render(request, 'dashboard/dashboard-blog.html', greeting)
+# class CryptoView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         greeting = {}
+#         greeting['heading'] = "Crypto"
+#         greeting['pageview'] = "Dashboards"
+#         return render(request, 'dashboard/dashboard-crypto.html', greeting)
+#
+#
+# class BlogView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         greeting = {}
+#         greeting['heading'] = "Blog"
+#         greeting['pageview'] = "Dashboards"
+#         return render(request, 'dashboard/dashboard-blog.html', greeting)
 
 
 class CalendarView(LoginRequiredMixin, View):
@@ -69,12 +69,12 @@ class CalendarFullView(LoginRequiredMixin, View):
         return render(request, 'calendar-full.html', greeting)
 
 
-class ChatView(LoginRequiredMixin, View):
-    def get(self, request):
-        greeting = {}
-        greeting['heading'] = "Chat"
-        greeting['pageview'] = "Apps"
-        return render(request, 'chat-view.html', greeting)
+# class ChatView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         greeting = {}
+#         greeting['heading'] = "Chat"
+#         greeting['pageview'] = "Apps"
+#         return render(request, 'chat-view.html', greeting)
 
 
 class FileManagerView(LoginRequiredMixin, View):

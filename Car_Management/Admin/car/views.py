@@ -1,17 +1,15 @@
-import json
 import os
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files.storage import FileSystemStorage, default_storage
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import JsonResponse, HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier, \
-    CATEGORY_TYPE, product_directory_path
+from .models import Products, CartOrder, CartOrderItems, Customer, Order, StatisticsProducts, Invoice, Supplier
 
 
 # Add to cart
@@ -353,19 +351,20 @@ class EditProductView(LoginRequiredMixin, View):
 
     def post(self, request, pid):
         product = Products.objects.filter(pid=pid).first()
-        title = request.POST.get('title', product.title)
-        category = request.POST.get('category', product.category)
-        supplier = request.POST.get('supplier', product.supplier.id)
-        cost = request.POST.get('cost', product.cost_price)
-        price = request.POST.get('price', product.price)
-        quantity = request.POST.get('quantity', product.quantity)
-        description = request.POST.get('description', product.description)
+        title = request.POST.get('title') or product.title
+        category = request.POST.get('category') or product.category
+        supplier = request.POST.get('supplier') or product.supplier
+        cost = request.POST.get('cost') or product.cost_price
+        price = request.POST.get('price') or product.price
+        quantity = request.POST.get('quantity') or product.stock_count
+        description = request.POST.get('description') or product.description
 
         product.title = title
         # product.supplier = supplier
         # product.category = category
         product.cost_price = cost
         product.price = price
+        product.stock_count = quantity
         product.quantity = quantity
         product.description = description
         product.save()

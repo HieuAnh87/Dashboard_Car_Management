@@ -16,12 +16,70 @@
     .product-img:hover .add-to-cart {
         visibility: visible;
     }
+    .modal-container {
+        background-color: #007bff;
+        width: 400px;
+        min-height: 150px;
+        position: relative;
+        animation: modalFadeIn ease 0.5s;
+    }
+    .modal {
+        position: fixed;
+        width: 400px;
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        display: none;
+    }
+    .modal.open{
+        display: flex;
+        margin-left:500px;
+        margin-top:-200px;
+    }
+    @keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
     .add-to-cart {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         visibility: hidden;
+    }
+    .modal-container {
+        background-color: #007bff;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 20px;
+        color: white;
+    }
+    .modal-container {
+        background-color: #28a745;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 20px;
+    }
+    .modal-container h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: white;
+    }
+    .modal-container p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .modal-container footer {
+        font-size: 14px;
+        color: #666;
+        color: white;
     }
   </style>
 {% endblock %}
@@ -61,6 +119,7 @@
                                                 <li><a href="?category=car exterior"><i class="mdi mdi-chevron-right me-1"></i> CAR EXTERIOR</a></li>
                                                 <li><a href="?category=car accessories"><i class="mdi mdi-chevron-right me-1"></i> CAR ACCESSORIES</a></li>
                                                 <li><a href="?category=car care services"><i class="mdi mdi-chevron-right me-1"></i> CAR CARE SERVICES</a></li>
+                                                <li><a href="?category=car parts"><i class="mdi mdi-chevron-right me-1"></i> CAR PARTS</a></li>
                                             </ul>
                                         </div>
                                         <div>
@@ -183,8 +242,8 @@
                                                     <a class="nav-link" href="#"><i class="bx bx-list-ul"></i></a>
                                                 </li>
                                             </ul>
-                                            
-                                            
+
+
                                         </form>
                                     </div>
                                 </div>
@@ -204,7 +263,7 @@
                                                     <a href="{% url 'car-productdetail' p.pid %}" class="d-block">
                                                         <img src="{{ p.image.url }}" style="width:250px;height:250px;" alt="" class="img-fluid mx-auto d-block product-img">
                                                     </a>
-                                                        <button id="addToCartBtn" type="button" class="btn dripicons-cart btn-primary btn-rounded bg-gradient add-to-cart addToCartBtn">Add to cart</button>
+                                                        <button id="addToCartBtn" type="button" class="btn dripicons-cart btn-primary btn-rounded bg-gradient add-to-cart addToCartBtn js-buy-tickets">Add to cart</button>
                                                 </div>
                                                 <div class="mt-4 text-center">
                                                     <h5 class="mb-3 text-truncate"><a href="{% url 'car-productdetail' p.pid %}" class="text-dark">{{ p.title }}</a></h5>
@@ -283,6 +342,45 @@
               "hideMethod": "fadeOut"
         }
         </script>
+        <div class="modal js-modal ">
+        <div class="modal-container js-modal-container">
+            <h1>Thêm sản phẩm thành công!</h1>
+            <p>Vui lòng vào giỏ hàng để kiểm tra lại thông tin sản phẩm.</p>
+        </div>
+    </div>
+
+    <script>
+        const buyBtns = document.querySelectorAll('.js-buy-tickets')
+        const modal = document.querySelector('.js-modal')
+        const modalContainer = document.querySelector('.js-modal-container')
+        const modalClose = document.querySelector('.js-modal-close')
+
+        // Hàm hiển thị(thêm class open vào modal)
+        function showBuyTickets() {
+            modal.classList.add('open')
+        }
+        // Hàm close modal mua vé(gỡ bỏ class modal)
+        function closeBuyTickets() {
+            modal.classList.remove('open')
+        }
+        // lặp qua từng thẻ button và nghe click
+        for(const buyBtn of buyBtns) {
+            buyBtn.addEventListener('click', showBuyTickets)
+        }
+        setInterval(function() {
+          document.querySelector('.open').classList.remove('open');
+        }, 3000);
+        // nghe hành vi click vào button close
+        modalClose.addEventListener('click', closeBuyTickets)
+
+        // click vào modal đóng modal
+        modal.addEventListener('click', closeBuyTickets)
+
+        // chặn lại tính chất nổi bọt, click vào modal-container không bị đóng modal
+        modalContainer.addEventListener('click', function(event) {
+            event.stopPropagation()
+        })
+    </script>
         <!-- init js -->
 
         <script src="{% static 'js/pages/add-to-cart.init.js' %}"></script>

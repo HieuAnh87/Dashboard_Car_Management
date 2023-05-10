@@ -27,8 +27,8 @@ urlpatterns = [
     # Dashboards View
     path('', views.SaasView.as_view(), name='dashboard'),
     path('dashboard_saas', views.SaasView.as_view(), name='dashboard_saas'),
-    path('dashboard_crypto', views.CryptoView.as_view(), name='dashboard_crypto'),
-    path('dashboard_blog', views.BlogView.as_view(), name='dashboard_blog'),
+    # path('dashboard_crypto', views.CryptoView.as_view(), name='dashboard_crypto'),
+    # path('dashboard_blog', views.BlogView.as_view(), name='dashboard_blog'),
     # Car View
     path('car/', include('car.urls')),
 
@@ -36,7 +36,7 @@ urlpatterns = [
     path('calendar', views.CalendarView.as_view(), name='calendar'),
     path('full-calendar', views.CalendarFullView.as_view(), name='full-calendar'),
     # Chat View
-    path('chat', views.ChatView.as_view(), name='chat'),
+    # path('chat', views.ChatView.as_view(), name='chat'),
     # Layouts
     path('layout/', include('layout.urls')),
     # File manager View
