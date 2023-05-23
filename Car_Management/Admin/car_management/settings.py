@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     # Local App
     'layout',
     'car',
-    'ecommerce',
+    # 'ecommerce',
     # 'crypto',
     # 'e_mail',
     # 'invoices',
@@ -62,8 +62,8 @@ INSTALLED_APPS = [
     # 'invoices',
     'contacts',
     # 'blog',
-    'pages',
-    'components',
+    # 'pages',
+    # 'components',
     # Third Party App
     'crispy_forms',
     'crispy_bootstrap4',
