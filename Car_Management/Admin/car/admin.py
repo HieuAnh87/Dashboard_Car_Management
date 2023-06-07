@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Products, Customer, Supplier, Report, ProductImages, CartOrderItems, CartOrder
+from .models import Products, Customer, Supplier, ProductImages, CartOrderItems, CartOrder, Order, Invoice, \
+    StatisticsProducts
 
 
 class ProductImagesAdmin(admin.TabularInline):
@@ -30,14 +31,24 @@ class CartOrderAdmin(admin.ModelAdmin):
     list_display = ['cid', 'user', 'product', 'quantity', 'price']
 
 
-class ReportAdmin(admin.ModelAdmin):
-    list_display = ['rid', 'user_created', 'report_date', 'report_type']
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['oid', 'grand_total', 'tax', 'total_price', 'date_created']
+
+
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = ['iid', 'prod', 'date_created', 'customer', 'order', 'user']
+
+
+class StatisticAdmin(admin.ModelAdmin):
+    list_display = ['product', 'quantity_sold', 'total_revenue']
 
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Products, ProductAdmin)
 admin.site.register(Supplier, SupplierAdmin)
-admin.site.register(Report, ReportAdmin)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(CartOrderItems, CartOrderItemsAdmin)
 admin.site.register(CartOrder, CartOrderAdmin)
+admin.site.register(Invoice, InvoiceAdmin)
+admin.site.register(StatisticsProducts, StatisticAdmin)

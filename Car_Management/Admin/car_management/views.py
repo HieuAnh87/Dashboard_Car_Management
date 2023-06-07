@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from allauth.account.views import PasswordSetView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
+from django.db.models import Sum
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -17,12 +20,31 @@ class DashboardView(LoginRequiredMixin, View):
         return render(request, 'dashboard/dashboard.html', greeting)
 
 
+def calculate_earnings_for_month(month):
+    earnings = (
+        Order.objects
+        .filter(date_created__month=month)
+        .aggregate(total_earnings=Sum('total_price'))
+    )
+    return earnings['total_earnings'] if earnings['total_earnings'] else 0
+
+
 class SaasView(LoginRequiredMixin, View):
     def get(self, request):
         product = Products.objects.all()
         order = Order.objects.all()
         customer = Customer.objects.all()
         total = 0
+        # get month only
+        this_month = datetime.now().month
+        # get earning for this month
+        earnings_this_month = calculate_earnings_for_month(this_month)
+        # get earning for last month
+        earnings_last_month = calculate_earnings_for_month(this_month - 1)
+        # get percentage change
+        percentage_change = ((earnings_this_month - earnings_last_month) / earnings_last_month) * 100
+
+
         for order_ in order:
             total += order_.total_price
 
