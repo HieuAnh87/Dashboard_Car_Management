@@ -1,10 +1,11 @@
+import csv
 import os
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, PageNotAnInteger
-from django.http import JsonResponse, HttpResponseServerError
+from django.http import JsonResponse, HttpResponseServerError, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views import View
@@ -154,7 +155,24 @@ class OrdersView(LoginRequiredMixin, View):
         }
 
         return render(request, 'car/car-orders.html', context)
+    def post(self, request):
+        orders = Order.objects.order_by('-id')
 
+        # Create the HttpResponse object with CSV content type
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+
+        # Create the CSV writer
+        writer = csv.writer(response)
+
+        # Write the header row
+        writer.writerow(['Order ID', 'User created', 'Customer', 'Grand Total', 'Tax', 'Total Price', 'Date Created'])
+
+        # Write the data rows
+        for order in orders:
+            writer.writerow([order.oid, order.user.username, order.customer.name, order.grand_total, order.tax, order.total_price, order.date_created])
+
+        return response
 
 #
 #
@@ -451,6 +469,26 @@ class InvoiceListView(LoginRequiredMixin, View):
             'invoices': invoices,
         }
         return render(request, 'car/car-invoicelist.html', context)
+
+    def post(self, request):
+        invoices = Invoice.objects.all()
+
+        # Create the HttpResponse object with CSV content type
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="invoices.csv"'
+
+        # Create the CSV writer
+        writer = csv.writer(response)
+
+        # Write the header row
+        writer.writerow(['Invoice ID', 'User created', 'Customer', 'Order', 'Products', 'Date Created'])
+
+        # Write the data rows
+        for invoice in invoices:
+            writer.writerow([invoice.iid, invoice.user.username, invoice.customer.name, invoice.order.oid, invoice.prod,
+                             invoice.date_created])
+
+        return response
 
 
 class InvoicePDFView(LoginRequiredMixin, View):
