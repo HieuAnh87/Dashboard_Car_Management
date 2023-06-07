@@ -50,7 +50,7 @@
                                                                 <label class="form-check-label" for="orderidcheck01"></label>
                                                             </div>
                                                         </td>
-                                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#{{ invoice.iid }}</a> </td>
+                                                        <td><a href="{% url 'car-invoice_pdf' invoice.iid %}" class="text-body fw-bold">#{{ invoice.iid }}</a> </td>
                                                         <td>{{ invoice.customer.name }}</td>
                                                         <td>
                                                             {{ invoice.order.format_day_month_year }}

@@ -18,4 +18,5 @@ urlpatterns = [
     path('delete_cart_item/', views.DeleteCartItemView.as_view(), name='delete_cart_item'), # car/delete_cart_item
     path('invoice/<oid>', views.InvoiceView.as_view(), name='car-invoice'),
     path('invoices/', views.InvoiceListView.as_view(), name='car-invoices'),
+    path('invoice_pdf/<iid>', views.InvoicePDFView.as_view(), name='car-invoice_pdf'),
 ]

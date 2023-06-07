@@ -451,3 +451,18 @@ class InvoiceListView(LoginRequiredMixin, View):
             'invoices': invoices,
         }
         return render(request, 'car/car-invoicelist.html', context)
+
+
+class InvoicePDFView(LoginRequiredMixin, View):
+    def get(self, request, iid):
+        invoice = Invoice.objects.filter(iid=iid).first()
+        customer = Customer.objects.filter(id=invoice.customer.id).first()
+        order = Order.objects.filter(id=invoice.order.id).first()
+        context = {
+            'heading': "Invoice Detail",
+            'pageview': "Car Management",
+            'invoice': invoice,
+            'customer': customer,
+            'order': order,
+        }
+        return render(request, 'car/car-invoicepdf.html', context)
