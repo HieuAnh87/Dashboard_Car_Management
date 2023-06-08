@@ -84,10 +84,10 @@ class SaasView(LoginRequiredMixin, View):
 
         statistic = StatisticsProducts.objects.all().order_by('-total_revenue')[:1]
 
-        for product in statistic:
-            product_name = product.product.title
-            quantity_sold = product.quantity_sold
-            total_rev = product.total_revenue
+        for prod in statistic:
+            product_name = prod.product.title
+            quantity_sold = prod.quantity_sold
+            total_rev = prod.total_revenue
 
         total_revs = StatisticsProducts.objects.aggregate(Sum('quantity_sold'))
         total_value = total_revs['quantity_sold__sum']
