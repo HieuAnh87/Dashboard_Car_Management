@@ -96,6 +96,10 @@ class SaasView(LoginRequiredMixin, View):
         # print(total_revenue)
         print(total_value)
 
+        percent_selling = (quantity_sold / total_value) * 100
+        percent_selling = float("{:.2f}".format(percent_selling))
+
+
         selling_label = [product_name, 'Total']
         selling_quantity = [quantity_sold, total_value]
 
@@ -117,6 +121,7 @@ class SaasView(LoginRequiredMixin, View):
             'product_name': product_name,
             'selling_label': selling_label,
             'selling_quantity': selling_quantity,
+            'percent_selling': percent_selling,
         }
         return render(request, 'dashboard/dashboard-saas.html', context)
 
